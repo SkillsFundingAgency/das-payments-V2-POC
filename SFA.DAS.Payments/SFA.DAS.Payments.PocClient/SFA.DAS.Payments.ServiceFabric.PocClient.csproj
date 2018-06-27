@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="22.1.4" />
+    <PackageReference Include="ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model" Version="0.1.2-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model.Interface" Version="0.1.2-beta0001" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.Payments.TestDataGenerator\SFA.DAS.Payments.TestDataGenerator.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model" Version="0.1.2-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model.Interface" Version="0.1.2-beta0001" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.Payments.Domain\SFA.DAS.Payments.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ALBOutput1000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

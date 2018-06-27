@@ -6,7 +6,7 @@ namespace SFA.DAS.Payments.Domain
     {
         public long Ukprn { get; set; }
 
-        public long LearnerReferenceNumber { get; set; }
+        public string LearnerReferenceNumber { get; set; }
 
         public decimal Amount { get; set; }
 
