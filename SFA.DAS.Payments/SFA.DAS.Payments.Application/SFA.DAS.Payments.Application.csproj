@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.Payments.Domain\SFA.DAS.Payments.Domain.csproj" />
+    <ProjectReference Include="..\SFA.DAS.Payments.TestDataGenerator\SFA.DAS.Payments.TestDataGenerator.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,65 +8,120 @@ using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Microsoft.ServiceFabric.Actors.Client;
 using DataLockActor.Interfaces;
+using Microsoft.ServiceFabric.Data.Collections;
+using Newtonsoft.Json;
+using SFA.DAS.Payments.Application.Interfaces;
+using SFA.DAS.Payments.Domain;
+using SFA.DAS.Payments.Domain.DataLock.Matcher;
 
 namespace DataLockActor
 {
-    /// <remarks>
-    /// This class represents an actor.
-    /// Every ActorID maps to an instance of this class.
-    /// The StatePersistence attribute determines persistence and replication of actor state:
-    ///  - Persisted: State is written to disk and replicated.
-    ///  - Volatile: State is kept in memory only and replicated.
-    ///  - None: State is kept in memory only and not replicated.
-    /// </remarks>
     [StatePersistence(StatePersistence.Persisted)]
     internal class DataLockActor : Actor, IDataLockActor
     {
-        /// <summary>
-        /// Initializes a new instance of DataLockActor
-        /// </summary>
-        /// <param name="actorService">The Microsoft.ServiceFabric.Actors.Runtime.ActorService that will host this actor instance.</param>
-        /// <param name="actorId">The Microsoft.ServiceFabric.Actors.ActorId for this actor instance.</param>
+        private long _ukprn;
+        private IEarningProvider _earningProvider;
+
         public DataLockActor(ActorService actorService, ActorId actorId) 
             : base(actorService, actorId)
         {
+            _ukprn = actorId.GetLongId();
         }
 
-        /// <summary>
-        /// This method is called whenever an actor is activated.
-        /// An actor is activated the first time any of its methods are invoked.
-        /// </summary>
-        protected override Task OnActivateAsync()
+        protected override async Task OnActivateAsync()
         {
             ActorEventSource.Current.ActorMessage(this, "Actor activated.");
 
-            // The StateManager is this actor's private state store.
-            // Data stored in the StateManager will be replicated for high-availability for actors that use volatile or persisted state storage.
-            // Any serializable object can be saved in the StateManager.
-            // For more information, see https://aka.ms/servicefabricactorsstateserialization
 
-            return this.StateManager.TryAddStateAsync("count", 0);
+
+            // load commitments
+
+            ICommitmentProvider commitmentProvider = new CommitmentProvider();
+
+            var commitments = commitmentProvider.GetCommitments(_ukprn)
+                .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
+                .ToDictionary(c => c.Key, c => c.ToList());
+
+            await StateManager.GetOrAddStateAsync("commitments", commitments);
+            
+
+
+            // load earnings
+
+            //IEarningProvider earningProvider = new EarningProvider();
+
+            //var earnings = earningProvider.GetEarnings()
+            //    .GroupBy(e => string.Concat(e.Ukprn, "-", e.LearnerReferenceNumber))
+            //    .ToDictionary(e => e.Key, e => e.ToList());
+
+            //await StateManager.GetOrAddStateAsync("earnings", commitments);
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<int> IDataLockActor.GetCountAsync(CancellationToken cancellationToken)
+        public async Task ProcessEarning(Earning earning)
         {
-            return this.StateManager.GetStateAsync<int>("count", cancellationToken);
+            // find commitment
+            var allCommitments = await StateManager.GetStateAsync<IDictionary<string, List<Commitment>>>("commitments");
+            List<Commitment> commitments;
+            bool payable;
+
+            var payableEarnings = new List<PayableEarning>();
+            var nonPayableEarnings = new List<NonPayableEarning>();
+            
+            if (allCommitments.TryGetValue(string.Concat(earning.Ukprn, "-", earning.LearnerReferenceNumber), out commitments))
+            {
+                // compare
+                var matcher = MatcherFactory.CreateMatcher();
+                var accounts = new List<Account>();
+                var matchResult = matcher.Match(commitments, earning, accounts);
+                payable = matchResult.ErrorCodes.Count > 0;
+
+                // create (non)payable earning
+                if (payable)
+                    payableEarnings.Add(new PayableEarning
+                    {
+                        Commitment = commitments[0],
+                        Earning = earning
+                    });
+                else
+                    nonPayableEarnings.Add(new NonPayableEarning
+                    {
+                        Earning = earning,
+                        Errors = matchResult.ErrorCodes
+                    });
+            }
+            else
+            {
+                nonPayableEarnings.Add(new NonPayableEarning
+                {
+                    Earning = earning,
+                    Errors = new[] {"DLOCK_02"}
+                });
+
+            }
+
+            WritePayableEarnings(payableEarnings, nonPayableEarnings);
+
+
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        Task IDataLockActor.SetCountAsync(int count, CancellationToken cancellationToken)
+        private void WritePayableEarnings(List<PayableEarning> payableEarnings, List<NonPayableEarning> nonPayableEarnings)
         {
-            // Requests are not guaranteed to be processed in order nor at most once.
-            // The update function here verifies that the incoming count is greater than the current count to preserve order.
-            return this.StateManager.AddOrUpdateStateAsync("count", count, (key, value) => count > value ? count : value, cancellationToken);
+            Debug.WriteLine($"============================== {payableEarnings.Count} Payable Earnings ==============================");
+            foreach (var payableEarning in payableEarnings)
+            {
+                Debug.WriteLine(JsonConvert.SerializeObject(payableEarning));
+            }
+
+            Debug.WriteLine($"============================== {nonPayableEarnings.Count} Non-Payable Earnings ==============================");
+            foreach (var nonPayableEarning in nonPayableEarnings)
+            {
+                Debug.WriteLine(JsonConvert.SerializeObject(nonPayableEarning));
+            }
+        }
+
+        public Task ProcessCommitment(Commitment commitment)
+        {
+            throw new NotImplementedException();
         }
     }
 }

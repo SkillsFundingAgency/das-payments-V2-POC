@@ -7,5 +7,6 @@
         public decimal LevyBalance { get; set; }
 
         public decimal TransferBalance { get; set; }
+        public bool IsLevyPayer { get; set; }
     }
 }

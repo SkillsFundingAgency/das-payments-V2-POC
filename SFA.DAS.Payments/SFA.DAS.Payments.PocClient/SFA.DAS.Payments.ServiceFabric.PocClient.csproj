@@ -17,10 +17,13 @@
     <PackageReference Include="Bogus" Version="22.1.4" />
     <PackageReference Include="ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model" Version="0.1.2-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model.Interface" Version="0.1.2-beta0001" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.1.283" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataLockActor.Interfaces\DataLockActor.Interfaces.csproj" />
+    <ProjectReference Include="..\SFA.DAS.Payments.Application\SFA.DAS.Payments.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.Payments.TestDataGenerator\SFA.DAS.Payments.TestDataGenerator.csproj" />
   </ItemGroup>
 

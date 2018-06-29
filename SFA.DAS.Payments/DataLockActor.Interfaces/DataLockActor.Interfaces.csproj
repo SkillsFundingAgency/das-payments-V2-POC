@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.1.283" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.Payments.Domain\SFA.DAS.Payments.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
