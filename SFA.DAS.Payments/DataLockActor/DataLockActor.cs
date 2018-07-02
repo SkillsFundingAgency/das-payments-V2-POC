@@ -1,127 +1,149 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.ServiceFabric.Actors;
-using Microsoft.ServiceFabric.Actors.Runtime;
-using Microsoft.ServiceFabric.Actors.Client;
-using DataLockActor.Interfaces;
-using Microsoft.ServiceFabric.Data.Collections;
-using Newtonsoft.Json;
-using SFA.DAS.Payments.Application.Interfaces;
-using SFA.DAS.Payments.Domain;
-using SFA.DAS.Payments.Domain.DataLock.Matcher;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Diagnostics;
+//using System.Linq;
+//using System.Threading;
+//using System.Threading.Tasks;
+//using Microsoft.ServiceFabric.Actors;
+//using Microsoft.ServiceFabric.Actors.Runtime;
+//using Microsoft.ServiceFabric.Actors.Client;
+//using DataLockActor.Interfaces;
+//using Microsoft.ServiceFabric.Data.Collections;
+//using Newtonsoft.Json;
+//using SFA.DAS.Payments.Application.Interfaces;
+//using SFA.DAS.Payments.Domain;
+//using SFA.DAS.Payments.Domain.DataLock.Matcher;
 
-namespace DataLockActor
-{
-    [StatePersistence(StatePersistence.Persisted)]
-    internal class DataLockActor : Actor, IDataLockActor
-    {
-        private long _ukprn;
-        private IEarningProvider _earningProvider;
+//namespace DataLockActor
+//{
+//    [StatePersistence(StatePersistence.Persisted)]
+//    internal class DataLockActor : Actor, IDataLockActor
+//    {
+//        private long _ukprn;
+//        private IEarningProvider _earningProvider;
+//        private List<long> _speed = new List<long>();
 
-        public DataLockActor(ActorService actorService, ActorId actorId) 
-            : base(actorService, actorId)
-        {
-            _ukprn = actorId.GetLongId();
-        }
+//        public DataLockActor(ActorService actorService, ActorId actorId) 
+//            : base(actorService, actorId)
+//        {
+//            _ukprn = actorId.GetLongId();
+//        }
 
-        protected override async Task OnActivateAsync()
-        {
-            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
+//        protected override async Task OnActivateAsync()
+//        {
+//            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
+
+//            // load commitments
+//            var sw = Stopwatch.StartNew();
+
+//            ICommitmentProvider commitmentProvider = new CommitmentProvider();
+
+//            var commitments = commitmentProvider.GetCommitments(_ukprn)
+//                .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
+//                .ToDictionary(c => c.Key, c => c.ToList());
+
+//            Debug.WriteLine($"read from provider in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
+//            sw.Restart();
+
+//            await StateManager.GetOrAddStateAsync("commitments", commitments);
+            
+//            Debug.WriteLine($"saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
 
 
+//            // load earnings
 
-            // load commitments
+//            //IEarningProvider earningProvider = new EarningProvider();
 
-            ICommitmentProvider commitmentProvider = new CommitmentProvider();
+//            //var earnings = earningProvider.GetEarnings()
+//            //    .GroupBy(e => string.Concat(e.Ukprn, "-", e.LearnerReferenceNumber))
+//            //    .ToDictionary(e => e.Key, e => e.ToList());
 
-            var commitments = commitmentProvider.GetCommitments(_ukprn)
-                .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
-                .ToDictionary(c => c.Key, c => c.ToList());
+//            //await StateManager.GetOrAddStateAsync("earnings", commitments);
+//        }
 
-            await StateManager.GetOrAddStateAsync("commitments", commitments);
+//        public async Task ProcessEarning(Earning earning)
+//        {
+//            var sw = Stopwatch.StartNew();
+
+//            // find commitment
+//            var allCommitments = await StateManager.GetStateAsync<IDictionary<string, List<Commitment>>>("commitments");
+
+//            //////var timing1 = sw.ElapsedMilliseconds;
+//            //////_speed.Add(timing1);
+//            //////Debug.WriteLine($"got all items in {timing1.ToString("##,##0")}ms, avg of {_speed.Count}: {_speed.Average()}ms");
+
+//            List<Commitment> commitments;
+//            bool payable;
+
+//            var payableEarnings = new List<PayableEarning>();
+//            var nonPayableEarnings = new List<NonPayableEarning>();
             
 
+//            //sw.Restart();
 
-            // load earnings
+//            var key = string.Concat(earning.Ukprn, "-", earning.LearnerReferenceNumber);
+//            if (allCommitments.TryGetValue(key, out commitments))
+//            {
+//                //Debug.WriteLine($"got one item in {sw.ElapsedMilliseconds.ToString("##,##0")}ms");
 
-            //IEarningProvider earningProvider = new EarningProvider();
+//                // compare
+//                var matcher = MatcherFactory.CreateMatcher();
+//                var accounts = new List<Account>();
+//                var matchResult = matcher.Match(commitments, earning, accounts);
+//                payable = matchResult.ErrorCodes.Count > 0;
 
-            //var earnings = earningProvider.GetEarnings()
-            //    .GroupBy(e => string.Concat(e.Ukprn, "-", e.LearnerReferenceNumber))
-            //    .ToDictionary(e => e.Key, e => e.ToList());
+//                // create (non)payable earning
+//                if (payable)
+//                    payableEarnings.Add(new PayableEarning
+//                    {
+//                        Commitment = commitments[0],
+//                        Earning = earning
+//                    });
+//                else
+//                    nonPayableEarnings.Add(new NonPayableEarning
+//                    {
+//                        Earning = earning,
+//                        Errors = matchResult.ErrorCodes
+//                    });
+//            }
+//            else
+//            {
+//                nonPayableEarnings.Add(new NonPayableEarning
+//                {
+//                    Earning = earning,
+//                    Errors = new[] {"DLOCK_02"}
+//                });
 
-            //await StateManager.GetOrAddStateAsync("earnings", commitments);
-        }
+//            }
 
-        public async Task ProcessEarning(Earning earning)
-        {
-            // find commitment
-            var allCommitments = await StateManager.GetStateAsync<IDictionary<string, List<Commitment>>>("commitments");
-            List<Commitment> commitments;
-            bool payable;
+//            WritePayableEarnings(payableEarnings, nonPayableEarnings);
 
-            var payableEarnings = new List<PayableEarning>();
-            var nonPayableEarnings = new List<NonPayableEarning>();
-            
-            if (allCommitments.TryGetValue(string.Concat(earning.Ukprn, "-", earning.LearnerReferenceNumber), out commitments))
-            {
-                // compare
-                var matcher = MatcherFactory.CreateMatcher();
-                var accounts = new List<Account>();
-                var matchResult = matcher.Match(commitments, earning, accounts);
-                payable = matchResult.ErrorCodes.Count > 0;
+//            allCommitments[key][0].NegotiatedPrice += 1;
+//            //await StateManager.SetStateAsync("commitments", allCommitments);
 
-                // create (non)payable earning
-                if (payable)
-                    payableEarnings.Add(new PayableEarning
-                    {
-                        Commitment = commitments[0],
-                        Earning = earning
-                    });
-                else
-                    nonPayableEarnings.Add(new NonPayableEarning
-                    {
-                        Earning = earning,
-                        Errors = matchResult.ErrorCodes
-                    });
-            }
-            else
-            {
-                nonPayableEarnings.Add(new NonPayableEarning
-                {
-                    Earning = earning,
-                    Errors = new[] {"DLOCK_02"}
-                });
+//            var timing1 = sw.ElapsedTicks;
+//            _speed.Add(timing1);
+//            Debug.Write($"inside: {timing1:##,##0}t, avg of {_speed.Count}: {_speed.Average():#,##0.##}t. ");
+//        }
 
-            }
+//        private void WritePayableEarnings(List<PayableEarning> payableEarnings, List<NonPayableEarning> nonPayableEarnings)
+//        {
+//            foreach (var payableEarning in payableEarnings)
+//            {
+//                var serializeObject = JsonConvert.SerializeObject(payableEarning);
+//                //Debug.Write("+");
+//            }
 
-            WritePayableEarnings(payableEarnings, nonPayableEarnings);
+//            foreach (var nonPayableEarning in nonPayableEarnings)
+//            {
+//                var serializeObject = JsonConvert.SerializeObject(nonPayableEarning);
+//                //Debug.Write("-");
+//            }
+//        }
 
-
-        }
-
-        private void WritePayableEarnings(List<PayableEarning> payableEarnings, List<NonPayableEarning> nonPayableEarnings)
-        {
-            Debug.WriteLine($"============================== {payableEarnings.Count} Payable Earnings ==============================");
-            foreach (var payableEarning in payableEarnings)
-            {
-                Debug.WriteLine(JsonConvert.SerializeObject(payableEarning));
-            }
-
-            Debug.WriteLine($"============================== {nonPayableEarnings.Count} Non-Payable Earnings ==============================");
-            foreach (var nonPayableEarning in nonPayableEarnings)
-            {
-                Debug.WriteLine(JsonConvert.SerializeObject(nonPayableEarning));
-            }
-        }
-
-        public Task ProcessCommitment(Commitment commitment)
-        {
-            throw new NotImplementedException();
-        }
-    }
-}
+//        public Task ProcessCommitment(Commitment commitment)
+//        {
+//            throw new NotImplementedException();
+//        }
+//    }
+//}

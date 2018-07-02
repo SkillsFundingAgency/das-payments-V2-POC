@@ -13,7 +13,7 @@ namespace DataLockActor.Interfaces
 {
     public interface IDataLockActor : IActor
     {
-        Task ProcessEarning(Earning earning);
+        Task<Metric> ProcessEarning(Earning earning);
 
         Task ProcessCommitment(Commitment commitment);
     }
