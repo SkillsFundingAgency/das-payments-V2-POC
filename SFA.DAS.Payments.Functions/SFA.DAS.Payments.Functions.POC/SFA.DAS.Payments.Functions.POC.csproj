@@ -4,28 +4,10 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="DataLockOrchestrator\function.json.old" />
-    <None Remove="EarningOrchestrator\function.json.old" />
-    <None Remove="EarningsOrchestrator\function.json.old" />
     <None Remove="function.json" />
-    <None Remove="ValidationOrchestrator\function.json.old" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="EarningOrchestrator\function.json.old">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DataLockOrchestrator\function.json.old">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="EarningsOrchestrator\function.json.old">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="function.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ValidationOrchestrator\function.json.old">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -36,6 +18,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.14" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SFA.DAS.Payments\SFA.DAS.Payments.Application\SFA.DAS.Payments.Application.csproj" />
     <ProjectReference Include="..\..\SFA.DAS.Payments\SFA.DAS.Payments.Domain\SFA.DAS.Payments.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>

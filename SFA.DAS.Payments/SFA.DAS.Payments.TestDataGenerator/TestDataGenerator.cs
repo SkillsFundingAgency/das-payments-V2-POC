@@ -20,11 +20,13 @@ namespace SFA.DAS.Payments.TestDataGenerator
         public static IFundingOutputs Create1000Learners()
         {
             var jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-            var path = Path.Combine(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath), "ALBOutput1000.json");
+            var directory = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath);
+            var file =string.Concat(directory.Contains("netcoreapp2.0") ? string.Empty : "..\\", "ALBOutput1000.json");
+            var path = Path.Combine(directory, file);
             return JsonConvert.DeserializeObject<FundingOutputs>(File.ReadAllText(path), jsonSerializerSettings);
         }
 
-        public static IList<Earning> CreateEarningsFromLearners(IFundingOutputs fundingOutputs = null, string collectionPeriod = "1718-R11")
+        public static List<Earning> CreateEarningsFromLearners(IFundingOutputs fundingOutputs = null, string collectionPeriod = "1718-R11")
         {
             var deliveryPeriodPrefix = collectionPeriod.Substring(0, 6);
 
@@ -45,8 +47,8 @@ namespace SFA.DAS.Payments.TestDataGenerator
                         {
                             Ukprn = fundingOutputs.Global.UKPRN,
                             LearnerReferenceNumber = learner.LearnRefNumber,
-                            DeliveryPeriod = deliveryPeriodPrefix + i.ToString("d2")
-
+                            DeliveryPeriod = deliveryPeriodPrefix + i.ToString("d2"),
+                            Uln = new Random(100000).Next()
                         };
 
                         foreach (var attribute in learningDeliveryAttribute.LearningDeliveryPeriodisedAttributes)
@@ -82,7 +84,9 @@ namespace SFA.DAS.Payments.TestDataGenerator
                 PathwayCode = random.Next(5),
                 ProgrammeType = 1,
                 StandardCode = 25,
-                TransferSenderAccountId = random.Next(10) == 10 ? random.Next(1, 5) : (long?)null                
+                TransferSenderAccountId = random.Next(10) == 10 ? random.Next(1, 5) : (long?) null,
+                Uln = e.Uln ?? 0,
+                NegotiatedPrice = e.Amount
             }).ToList();
         }
 

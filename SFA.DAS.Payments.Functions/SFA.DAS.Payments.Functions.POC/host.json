@@ -1,0 +1,7 @@
+{
+  "durableTask": {
+    "partitionCount": 16,
+    "extendedSessionsEnabled": true,
+    "extendedSessionIdleTimeoutInSeconds": 30
+  }
+}

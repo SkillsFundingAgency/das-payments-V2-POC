@@ -22,7 +22,7 @@ namespace SFA.DAS.Payments.Domain
 
         public long EmployerAccountId { get; set; }
         public int PaymentStatus { get; set; }
-        public long? NegotiatedPrice { get; set; }
+        public decimal NegotiatedPrice { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime EffectiveFrom { get; set; }

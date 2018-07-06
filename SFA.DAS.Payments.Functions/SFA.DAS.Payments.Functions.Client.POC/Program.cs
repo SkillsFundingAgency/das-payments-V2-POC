@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
+using SFA.DAS.Payments.Domain;
 
 namespace SFA.DAS.Payments.Functions.PocClient
 {
@@ -24,7 +26,7 @@ namespace SFA.DAS.Payments.Functions.PocClient
 
             Console.ReadLine();
 
-            const int messageSize = 1000;
+            const int messageSize = 100;
 
             try
             {
@@ -41,6 +43,8 @@ namespace SFA.DAS.Payments.Functions.PocClient
                         client.SendAsync(message);
 
                         current = learners.Skip(messageSize).Take(messageSize).ToList();
+
+                        current = new List<Earning>();
                     }
 
                     var res = Console.ReadLine();
