@@ -14,6 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.1.283" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.0" />
   </ItemGroup>
 
   <ItemGroup>
