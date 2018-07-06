@@ -7,6 +7,6 @@ namespace SFA.DAS.Payments.Application.Interfaces
     {
         IReadOnlyList<Account> GetAccounts(long ukprn);
 
-        IReadOnlyList<Account> GetAccounts(IReadOnlyList<long> accountIds);
+        List<Account> GetAccounts(IReadOnlyList<long> accountIds);
     }
 }

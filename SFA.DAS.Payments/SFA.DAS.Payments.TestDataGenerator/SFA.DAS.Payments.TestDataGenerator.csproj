@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <None Update="ALBOutput1000.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

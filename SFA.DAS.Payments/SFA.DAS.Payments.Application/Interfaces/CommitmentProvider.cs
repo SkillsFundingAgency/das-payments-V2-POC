@@ -14,7 +14,7 @@ namespace SFA.DAS.Payments.Application.Interfaces
             return _commitments.Where(c => c.Ukprn == ukprn).ToList();
         }
 
-        public IReadOnlyList<Commitment> GetCommitments(long ukprn, IReadOnlyList<string> learnerReferenceNumbers)
+        public List<Commitment> GetCommitments(long ukprn, IReadOnlyList<string> learnerReferenceNumbers)
         {
             Initialise();
             return _commitments.Where(c => c.Ukprn == ukprn && learnerReferenceNumbers.Contains(c.LearnerReferenceNumber)).ToList();

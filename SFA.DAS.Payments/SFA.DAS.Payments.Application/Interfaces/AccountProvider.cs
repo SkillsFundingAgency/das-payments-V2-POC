@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using SFA.DAS.Payments.Domain;
 
 namespace SFA.DAS.Payments.Application.Interfaces
@@ -10,9 +11,9 @@ namespace SFA.DAS.Payments.Application.Interfaces
             throw new System.NotImplementedException();
         }
 
-        public IReadOnlyList<Account> GetAccounts(IReadOnlyList<long> accountIds)
+        public List<Account> GetAccounts(IReadOnlyList<long> accountIds)
         {
-            throw new System.NotImplementedException();
+            return accountIds.Select(accountId => new Account {Id = accountId, IsLevyPayer = true, LevyBalance = 1000000M, TransferBalance = 1000000M}).ToList();
         }
 
         public static void SetAccounts(IList<Account> accounts)
