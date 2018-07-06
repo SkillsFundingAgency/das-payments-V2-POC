@@ -21,7 +21,13 @@ namespace DataLockActor
                 // are automatically populated when you build this project.
                 // For more information, see https://aka.ms/servicefabricactorsplatform
 
-                ActorRuntime.RegisterActorAsync<DataLockActor> (
+                ActorRuntime.RegisterActorAsync<DataLockActorTableStorage> (
+                   (context, actorType) => new ActorService(context, actorType)).GetAwaiter().GetResult();
+
+                ActorRuntime.RegisterActorAsync<DataLockActorSql> (
+                   (context, actorType) => new ActorService(context, actorType)).GetAwaiter().GetResult();
+
+                ActorRuntime.RegisterActorAsync<DataLockActorStateManager> (
                    (context, actorType) => new ActorService(context, actorType)).GetAwaiter().GetResult();
 
                 Thread.Sleep(Timeout.Infinite);

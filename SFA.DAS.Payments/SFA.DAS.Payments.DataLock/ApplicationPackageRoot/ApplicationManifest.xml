@@ -1,9 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="SFA.DAS.Payments.DataLockType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-    <Parameter Name="DataLockActorService_PartitionCount" DefaultValue="10" />
-    <Parameter Name="DataLockActorService_MinReplicaSetSize" DefaultValue="3" />
-    <Parameter Name="DataLockActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="DataLockActorSql_PartitionCount" DefaultValue="10" />
+    <Parameter Name="DataLockActorSql_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="DataLockActorSql_TargetReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="DataLockActorStateManager_PartitionCount" DefaultValue="10" />
+    <Parameter Name="DataLockActorStateManager_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="DataLockActorStateManager_TargetReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="DataLockActorTableStorage_PartitionCount" DefaultValue="10" />
+    <Parameter Name="DataLockActorTableStorage_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="DataLockActorTableStorage_TargetReplicaSetSize" DefaultValue="1" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -12,9 +18,19 @@
     <ServiceManifestRef ServiceManifestName="DataLockActorPkg" ServiceManifestVersion="1.0.0" />
   </ServiceManifestImport>
   <DefaultServices>
-    <Service Name="DataLockActorService" GeneratedIdRef="a175c97f-04d8-4681-a6a2-c2419586029a|Persisted">
-      <StatefulService ServiceTypeName="DataLockActorServiceType" TargetReplicaSetSize="[DataLockActorService_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorService_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[DataLockActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+    <Service Name="DataLockActorSql" GeneratedIdRef="e2c00f3c-3381-4fac-a208-33ac39016e91|None">
+      <StatefulService ServiceTypeName="DataLockActorSqlType" TargetReplicaSetSize="[DataLockActorSql_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorSql_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[DataLockActorSql_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="DataLockActorStateManager" GeneratedIdRef="86c2af9f-a334-4f5a-86e5-37cae0ba0046|None">
+      <StatefulService ServiceTypeName="DataLockActorStateManagerType" TargetReplicaSetSize="[DataLockActorStateManager_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorStateManager_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[DataLockActorStateManager_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="DataLockActorTableStorage" GeneratedIdRef="d7a4ade9-ad91-4ab5-8190-a14560d0446f|None">
+      <StatefulService ServiceTypeName="DataLockActorTableStorageType" TargetReplicaSetSize="[DataLockActorTableStorage_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorTableStorage_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[DataLockActorTableStorage_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
     <!-- The section below creates instances of service types, when an instance of this 

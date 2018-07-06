@@ -1,16 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="DataLockActorPkg" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <ServiceTypes>
-    <StatefulServiceType ServiceTypeName="DataLockActorServiceType" HasPersistedState="true">
+    <StatefulServiceType ServiceTypeName="DataLockActorSqlType">
       <Extensions>
-        <Extension Name="__GeneratedServiceType__" GeneratedId="a175c97f-04d8-4681-a6a2-c2419586029a|Persisted">
+        <Extension Name="__GeneratedServiceType__" GeneratedId="e2c00f3c-3381-4fac-a208-33ac39016e91|None">
           <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
-            <DefaultService Name="DataLockActorService" />
-            <ReplicatorEndpoint Name="DataLockActorServiceReplicatorEndpoint" />
-            <ReplicatorConfigSection Name="DataLockActorServiceReplicatorConfig" />
-            <ReplicatorSecurityConfigSection Name="DataLockActorServiceReplicatorSecurityConfig" />
-            <StoreConfigSection Name="DataLockActorServiceLocalStoreConfig" />
-            <ServiceEndpointV2 Name="DataLockActorServiceEndpointV2" />
+            <DefaultService Name="DataLockActorSql" />
+            <ReplicatorEndpoint Name="DataLockActorSqlReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="DataLockActorSqlReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="DataLockActorSqlReplicatorSecurityConfig" />
+            <StoreConfigSection Name="DataLockActorSqlLocalStoreConfig" />
+            <ServiceEndpointV2 Name="DataLockActorSqlEndpointV2" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
+    <StatefulServiceType ServiceTypeName="DataLockActorStateManagerType">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="86c2af9f-a334-4f5a-86e5-37cae0ba0046|None">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="DataLockActorStateManager" />
+            <ReplicatorEndpoint Name="DataLockActorStateManagerReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="DataLockActorStateManagerReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="DataLockActorStateManagerReplicatorSecurityConfig" />
+            <StoreConfigSection Name="DataLockActorStateManagerLocalStoreConfig" />
+            <ServiceEndpointV2 Name="DataLockActorStateManagerEndpointV2" />
+          </GeneratedNames>
+        </Extension>
+      </Extensions>
+    </StatefulServiceType>
+    <StatefulServiceType ServiceTypeName="DataLockActorTableStorageType">
+      <Extensions>
+        <Extension Name="__GeneratedServiceType__" GeneratedId="d7a4ade9-ad91-4ab5-8190-a14560d0446f|None">
+          <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
+            <DefaultService Name="DataLockActorTableStorage" />
+            <ReplicatorEndpoint Name="DataLockActorTableStorageReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="DataLockActorTableStorageReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="DataLockActorTableStorageReplicatorSecurityConfig" />
+            <StoreConfigSection Name="DataLockActorTableStorageLocalStoreConfig" />
+            <ServiceEndpointV2 Name="DataLockActorTableStorageEndpointV2" />
           </GeneratedNames>
         </Extension>
       </Extensions>
@@ -27,7 +55,12 @@
   <Resources>
     <Endpoints>
       <Endpoint Name="DataLockActorServiceEndpointV2" />
-      <Endpoint Name="DataLockActorServiceReplicatorEndpoint" />
+      <Endpoint Name="DataLockActorSqlEndpointV2" />
+      <Endpoint Name="DataLockActorSqlReplicatorEndpoint" />
+      <Endpoint Name="DataLockActorStateManagerEndpointV2" />
+      <Endpoint Name="DataLockActorStateManagerReplicatorEndpoint" />
+      <Endpoint Name="DataLockActorTableStorageEndpointV2" />
+      <Endpoint Name="DataLockActorTableStorageReplicatorEndpoint" />
     </Endpoints>
   </Resources>
   <!-- The content will be generated during build -->
