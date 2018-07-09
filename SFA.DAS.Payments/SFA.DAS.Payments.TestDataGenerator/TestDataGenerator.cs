@@ -87,7 +87,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
             var random = new Random();
             var i = 0;
-            return earnings.Skip(10).Take(earnings.Count - 100).Select(e => new Commitment
+            return earnings.Select(e => new Commitment
             {
                 LearnerReferenceNumber = e.LearnerReferenceNumber,
                 Ukprn = e.Ukprn,

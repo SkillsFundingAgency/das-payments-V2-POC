@@ -23,6 +23,7 @@ namespace DataLockActor
         {
             Ukprn = actorId.GetLongId();
             _actorNumber = ++_actorCounter;
+            Debug.WriteLine($"======================================== actor {_actorNumber}-{Ukprn} created ========================================");
         }
 
         protected abstract ILocalCommitmentCache GetLocalCache();

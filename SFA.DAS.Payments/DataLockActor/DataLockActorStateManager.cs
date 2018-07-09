@@ -28,6 +28,15 @@ namespace DataLockActor
             // load commitments
             var sw = Stopwatch.StartNew();
 
+            var stateNames = await StateManager.GetStateNamesAsync();
+            if (stateNames != null && stateNames.Any())
+            {
+                Debug.WriteLine($"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! skiping initialisation, state has {stateNames.Count()} keys !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+                return;
+            }
+
+            var cache = GetLocalCache();
+
             ICommitmentProvider commitmentProvider = new CommitmentProvider();
 
             var commitments = commitmentProvider.GetCommitments(Ukprn)
@@ -38,7 +47,6 @@ namespace DataLockActor
 
             sw.Restart();
 
-            var cache = GetLocalCache();
 
             await cache.Reset();
 
@@ -49,6 +57,5 @@ namespace DataLockActor
 
             Debug.WriteLine($"saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
         }
-
     }
 }
