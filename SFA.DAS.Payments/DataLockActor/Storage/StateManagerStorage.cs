@@ -26,7 +26,14 @@ namespace DataLockActor.Storage
 
         public async Task<IList<Commitment>> Get(string key)
         {
-            return await _stateManager.GetStateAsync<List<Commitment>>(key);
+            try
+            {
+                return await _stateManager.GetStateAsync<List<Commitment>>(key);
+            }
+            catch (KeyNotFoundException)
+            {
+                return null;
+            }
         }
 
         public async Task Update(string key, List<Commitment> commitments)

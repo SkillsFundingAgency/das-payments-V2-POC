@@ -20,6 +20,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
     {
         private const string TableStorageConnectionString = "UseDevelopmentStorage=true";
         private const string SqlStorageConnectionString = "Server=.;Database=SFA.DAS.Payments.POC;Trusted_Connection=True";
+        private const string MetricConnectionString = SqlStorageConnectionString;
 
         private static readonly Dictionary<int, PropertyInfo> _props = typeof(ILearningDeliveryPeriodisedAttribute).GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.Name.StartsWith("Period"))
@@ -176,5 +177,33 @@ namespace SFA.DAS.Payments.TestDataGenerator
                                    ,@Uln)", commitments);
             }
         }
+
+        public static async Task WriteMetric(Metric metric)
+        {
+            using (var cnn = new SqlConnection(MetricConnectionString))
+            {
+                await cnn.ExecuteAsync(@"INSERT INTO [dbo].[Metric]
+                                           ([BatchId]
+                                           ,[Number]
+                                           ,[InsideRead]
+                                           ,[InsideCalc]
+                                           ,[InsideWrite]
+                                           ,[OutsideProxy]
+                                           ,[OutsideCall]
+                                           ,[Actor])
+                                     VALUES
+                                           (@BatchId,
+                                           @Number,
+                                           @InsideRead,
+                                           @InsideCalc,
+                                           @InsideWrite,
+                                           @OutsideProxy,
+                                           @OutsideCall,
+                                           @Actor)"
+                    , metric);
+            }
+
+        }
+
     }
 }

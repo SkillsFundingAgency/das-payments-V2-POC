@@ -6,6 +6,7 @@ namespace SFA.DAS.Payments.Domain
 {
     public class Metric
     {
+        public string BatchId { get; set; }
         public int Number { get; set; }
         public long InsideRead { get; set; }
         public long InsideCalc { get; set; }

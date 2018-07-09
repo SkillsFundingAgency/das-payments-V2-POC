@@ -42,7 +42,7 @@ namespace DataLockActor
             metric.InsideRead = sw.ElapsedTicks;
             sw.Restart();
 
-            if (commitments != null)
+            if (commitments != null && commitments.Count > 0)
             {
                 // compare
                 var matcher = MatcherFactory.CreateMatcher();
@@ -71,14 +71,16 @@ namespace DataLockActor
                     Earning = earning,
                     Errors = new[] { "DLOCK_02" }
                 });
-
             }
 
             metric.InsideCalc = sw.ElapsedTicks;
             sw.Restart();
 
-            commitments[0].NegotiatedPrice += 100;
-            await cache.Update(key, commitments);
+            if (commitments != null)
+            {
+                commitments[0].NegotiatedPrice += 100;
+                await cache.Update(key, commitments);
+            }
 
             metric.InsideWrite = sw.ElapsedTicks;
             return metric;

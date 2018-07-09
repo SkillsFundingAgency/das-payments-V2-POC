@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using DataLockActor;
 using DataLockActor.Interfaces;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Client;
-using SFA.DAS.Payments.Application.Interfaces;
-    
+
 namespace SFA.DAS.Payments.ServiceFabric.PocClient
 {
     class Program
     {
         static void Main(string[] args)
         {
-
             var earnings = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners(spreadUkprnAcross: 5);
-            //EarningProvider.SetEarnings(earnings);
-            //CommitmentProvider.SetCommitments(TestDataGenerator.TestDataGenerator.CreateCommitmentsFromEarnings(earnings));
-            Debug.WriteLine("#,time inside,incl read,incl calc,incl output,incl write,time outside,incl getproxy,incl call");
+            var actorType = "DataLockActorTableStorage";
+            //var actorType = "DataLockActorSql";
+            //var actorType = "DataLockActorStateManager";
+            var metricBatchId = DateTime.UtcNow.ToString("s") + " " + actorType;
+
             Task.Run(async () =>
             {
                 try
                 {
-                    //await TestDataGenerator.TestDataGenerator.ResetAndPopulateTableStorage();
-                    await TestDataGenerator.TestDataGenerator.ResetAndPopulateSqlStorage();
+                    await TestDataGenerator.TestDataGenerator.ResetAndPopulateTableStorage();
+                    //await TestDataGenerator.TestDataGenerator.ResetAndPopulateSqlStorage();
 
                     var sw1 = Stopwatch.StartNew();
                     //var avg = new List<long>();
@@ -36,18 +33,25 @@ namespace SFA.DAS.Payments.ServiceFabric.PocClient
                         var earningsForUkprn = earnings.Where(e => e.Ukprn == ukprn).ToList();
                         for (var i = 0; i < earningsForUkprn.Count; i++)
                         {
-                            var sw2 = Stopwatch.StartNew();
-                            var earning = earningsForUkprn[i];
-                            var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri("fabric:/SFA.DAS.Payments.DataLock/DataLockActorSql"));
+                            try
+                            {
+                                var sw2 = Stopwatch.StartNew();
+                                var earning = earningsForUkprn[i];
+                                var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/SFA.DAS.Payments.DataLock/{actorType}"));
 
-                            var proxyTime = sw2.ElapsedTicks;
-                            sw2.Restart();
+                                var proxyTime = sw2.ElapsedTicks;
+                                sw2.Restart();
 
-                            var metrics = await actor.ProcessEarning(earning);
-                            metrics.OutsideProxy = proxyTime;
-                            metrics.OutsideCall = sw2.ElapsedTicks;
+                                var metrics = await actor.ProcessEarning(earning);
+                                metrics.OutsideProxy = proxyTime;
+                                metrics.OutsideCall = sw2.ElapsedTicks;
+                                metrics.BatchId = metricBatchId;
 
-                            Debug.WriteLine($"{metrics.Actor}: #{i},outside,{metrics.OutsideProxy},{metrics.OutsideCall}, inside, {metrics.InsideRead},{metrics.InsideCalc},{metrics.InsideWrite}");
+                                //Debug.WriteLine($"{metrics.Actor}: #{i},outside,{metrics.OutsideProxy},{metrics.OutsideCall}, inside, {metrics.InsideRead},{metrics.InsideCalc},{metrics.InsideWrite}");
+                                Debug.WriteLine($"{ukprn}-{(double) i / earningsForUkprn.Count:#0%}");
+                                await TestDataGenerator.TestDataGenerator.WriteMetric(metrics);
+                            }
+                            catch {}
                         }
 
                     });
