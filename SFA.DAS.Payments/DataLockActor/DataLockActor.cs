@@ -24,7 +24,7 @@ namespace DataLockActor
         
         private async Task InitialiseState(long ukprn)
         {
-            var initialised = await StateManager.ContainsStateAsync("initalised");
+            var initialised = await StateManager.ContainsStateAsync("initialised");
             if (initialised) return;
 
             // load commitments
@@ -49,7 +49,7 @@ namespace DataLockActor
             }
 
             Debug.WriteLine($"saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
-            await this.StateManager.AddStateAsync("initalised", true);
+            await this.StateManager.AddStateAsync("initialised", true);
         }
 
         private ILocalCommitmentCache GetLocalCache()
