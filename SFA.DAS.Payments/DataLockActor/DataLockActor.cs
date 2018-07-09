@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using DataLockActor.Interfaces;
+using DataLockActor.Storage;
 using Newtonsoft.Json;
 using SFA.DAS.Payments.Application.Interfaces;
 using SFA.DAS.Payments.Domain;
@@ -16,24 +17,22 @@ namespace DataLockActor
     [StatePersistence(StatePersistence.Persisted)]
     internal class DataLockActor : Actor, IDataLockActor
     {
-        private readonly long _ukprn;
-
         public DataLockActor(ActorService actorService, ActorId actorId)
             : base(actorService, actorId)
         {
-            _ukprn = actorId.GetLongId();
         }
-
-        protected override async Task OnActivateAsync()
+        
+        private async Task InitialiseState(long ukprn)
         {
-            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
+            var initialised = await StateManager.ContainsStateAsync("initalised");
+            if (initialised) return;
 
             // load commitments
             var sw = Stopwatch.StartNew();
 
             ICommitmentProvider commitmentProvider = new CommitmentProvider();
 
-            var commitments = commitmentProvider.GetCommitments(_ukprn)
+            var commitments = commitmentProvider.GetCommitments(ukprn)
                 .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
                 .ToDictionary(c => c.Key, c => c.ToList());
 
@@ -50,6 +49,7 @@ namespace DataLockActor
             }
 
             Debug.WriteLine($"saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
+            await this.StateManager.AddStateAsync("initalised", true);
         }
 
         private ILocalCommitmentCache GetLocalCache()
@@ -61,6 +61,7 @@ namespace DataLockActor
 
         public async Task<Metric> ProcessEarning(Earning earning)
         {
+            await InitialiseState(earning.Ukprn);
             var sw = Stopwatch.StartNew();
 
             var cache = GetLocalCache();

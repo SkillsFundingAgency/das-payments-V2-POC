@@ -4,6 +4,9 @@
     <Parameter Name="DataLockActorService_PartitionCount" DefaultValue="10" />
     <Parameter Name="DataLockActorService_MinReplicaSetSize" DefaultValue="3" />
     <Parameter Name="DataLockActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="DataLockActorProxyService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="DataLockActorProxyService_PartitionCount" DefaultValue="1" />
+    <Parameter Name="DataLockActorProxyService_TargetReplicaSetSize" DefaultValue="3" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -11,10 +14,18 @@
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="DataLockActorPkg" ServiceManifestVersion="1.0.0" />
   </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="DataLockActorProxyServicePkg" ServiceManifestVersion="1.0.0" />
+  </ServiceManifestImport>
   <DefaultServices>
     <Service Name="DataLockActorService" GeneratedIdRef="a175c97f-04d8-4681-a6a2-c2419586029a|Persisted">
       <StatefulService ServiceTypeName="DataLockActorServiceType" TargetReplicaSetSize="[DataLockActorService_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorService_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[DataLockActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="DataLockActorProxyService" ServicePackageActivationMode="ExclusiveProcess">
+      <StatefulService ServiceTypeName="DataLockActorProxyServiceType" TargetReplicaSetSize="[DataLockActorProxyService_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorProxyService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[DataLockActorProxyService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
     <!-- The section below creates instances of service types, when an instance of this 

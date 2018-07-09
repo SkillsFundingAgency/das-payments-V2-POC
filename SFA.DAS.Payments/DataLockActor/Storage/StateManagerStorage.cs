@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using SFA.DAS.Payments.Domain;
 
-namespace DataLockActor
+namespace DataLockActor.Storage
 {
     public class StateManagerStorage : ILocalCommitmentCache
     {

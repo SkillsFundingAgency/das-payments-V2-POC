@@ -7,17 +7,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.Domain", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.Application", "SFA.DAS.Payments.Application\SFA.DAS.Payments.Application.csproj", "{565A160C-A245-46CB-8CD2-52254074A391}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Payments.Storage", "SFA.DAS.Payments.Storage\SFA.DAS.Payments.Storage.csproj", "{35E853E3-DD94-4411-9FB3-32A370B8744E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.Storage", "SFA.DAS.Payments.Storage\SFA.DAS.Payments.Storage.csproj", "{35E853E3-DD94-4411-9FB3-32A370B8744E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Payments.ServiceFabric.PocClient", "SFA.DAS.Payments.PocClient\SFA.DAS.Payments.ServiceFabric.PocClient.csproj", "{378B820F-8789-4860-9505-B87432911137}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.ServiceFabric.PocClient", "SFA.DAS.Payments.PocClient\SFA.DAS.Payments.ServiceFabric.PocClient.csproj", "{378B820F-8789-4860-9505-B87432911137}"
 EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "SFA.DAS.Payments.DataLock", "SFA.DAS.Payments.DataLock\SFA.DAS.Payments.DataLock.sfproj", "{1E984F65-5140-4EF5-86DF-6E09DEE35590}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLockActor", "DataLockActor\DataLockActor.csproj", "{CB297256-887B-4F88-AA44-60977DD75EC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLockActor", "DataLockActor\DataLockActor.csproj", "{CB297256-887B-4F88-AA44-60977DD75EC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLockActor.Interfaces", "DataLockActor.Interfaces\DataLockActor.Interfaces.csproj", "{114C248B-D42B-4AFF-8145-8293BF6DFF31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLockActor.Interfaces", "DataLockActor.Interfaces\DataLockActor.Interfaces.csproj", "{114C248B-D42B-4AFF-8145-8293BF6DFF31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Payments.TestDataGenerator", "SFA.DAS.Payments.TestDataGenerator\SFA.DAS.Payments.TestDataGenerator.csproj", "{0FC9D8F8-CF60-4867-B0EE-AF0D3DEC0DE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.TestDataGenerator", "SFA.DAS.Payments.TestDataGenerator\SFA.DAS.Payments.TestDataGenerator.csproj", "{0FC9D8F8-CF60-4867-B0EE-AF0D3DEC0DE3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLockActorProxyService", "DataLockActorProxyService\DataLockActorProxyService.csproj", "{13CA66E5-C30F-4F19-9C69-A89358271091}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Payments.DataLock.Messages", "SFA.DAS.Payments.DataLock.Messages\SFA.DAS.Payments.DataLock.Messages.csproj", "{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +97,22 @@ Global
 		{0FC9D8F8-CF60-4867-B0EE-AF0D3DEC0DE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0FC9D8F8-CF60-4867-B0EE-AF0D3DEC0DE3}.Release|x64.ActiveCfg = Release|Any CPU
 		{0FC9D8F8-CF60-4867-B0EE-AF0D3DEC0DE3}.Release|x64.Build.0 = Release|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Debug|x64.Build.0 = Debug|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Release|x64.ActiveCfg = Release|Any CPU
+		{13CA66E5-C30F-4F19-9C69-A89358271091}.Release|x64.Build.0 = Release|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Debug|x64.Build.0 = Debug|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{C3AAEE1D-0D96-46F3-AFAB-EDC0E30DC4D5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
