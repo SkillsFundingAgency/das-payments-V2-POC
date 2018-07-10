@@ -6,9 +6,9 @@ using SFA.DAS.Payments.Domain.DataLock;
 
 namespace SFA.DAS.Payments.Functions.POC
 {
-    public static class ValidateUln
+    public static class UlnMatcher
     {
-        [FunctionName("ValidateUln")]
+        [FunctionName(nameof(UlnMatcher))]
         public static Task Run([ActivityTrigger]EarningValidation content)
         {
             var match = content.MatchResult;

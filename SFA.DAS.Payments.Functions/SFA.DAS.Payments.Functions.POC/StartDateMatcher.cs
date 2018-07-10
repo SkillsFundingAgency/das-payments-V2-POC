@@ -7,7 +7,7 @@ using SFA.DAS.Payments.Domain.DataLock;
 
 namespace SFA.DAS.Payments.Functions.POC
 {
-    public static class ValidateStartDate
+    public static class StartDateMatcher
     {
         [FunctionName("ValidateStartDate")]
         public static Task Run([ActivityTrigger]EarningValidation content)

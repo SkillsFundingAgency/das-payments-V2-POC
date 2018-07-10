@@ -9,7 +9,7 @@ namespace SFA.DAS.Payments.Functions.POC
 {
     public static class LearnerOrchestrator
     {
-        [FunctionName("LearnerOrchestrator")]
+        [FunctionName(nameof(LearnerOrchestrator))]
         public static async Task Run([OrchestrationTrigger] DurableOrchestrationContext context)
         {
             var input = context.GetInput<EarningsInput>();
@@ -25,7 +25,7 @@ namespace SFA.DAS.Payments.Functions.POC
                     var learnerCommitments = input.Commitments.Where(x => x.LearnerReferenceNumber == learner.Key).ToList();
                     var learnerAccounts = input.Accounts.Where(l => learnerCommitments.Select(x => x.Id).Contains(l.Id)).ToList();
                     var earningInput = new EarningsInput(input.Ukprn,learnerCommitments , learner.ToList(), learnerAccounts);
-                    result.Add(await context.CallSubOrchestratorAsync<LearnerOutput>("EarningsOrchestrator", earningInput));
+                    result.Add(await context.CallSubOrchestratorAsync<LearnerOutput>(nameof(EarningsOrchestrator), earningInput));
                 }
             }
             catch (Exception e)

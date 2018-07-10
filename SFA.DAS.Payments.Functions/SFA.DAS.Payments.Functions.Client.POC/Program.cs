@@ -13,20 +13,18 @@ namespace SFA.DAS.Payments.Functions.PocClient
     {
         private static void Main(string[] args)
         {
-          
+
             const string queueName = "datalockprocessor";
             var connectionString = ConfigurationManager.ConnectionStrings["dataLock"].ConnectionString;
 
             var client = new QueueClient(connectionString, queueName);
 
-        
+
             var exit = false;
 
             Console.WriteLine("Press Enter to send, Q to quit");
 
             Console.ReadLine();
-
-            const int messageSize = 100;
 
             try
             {
@@ -34,7 +32,9 @@ namespace SFA.DAS.Payments.Functions.PocClient
                 {
                     var learners = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners();
 
-                    var current = learners.Take(messageSize).ToList();
+                    const int batch = 100;
+                    var batchSize = 0;
+                    var current = learners.Skip(batchSize).Take(batch).ToList();
 
                     while (current.Any())
                     {
@@ -42,7 +42,9 @@ namespace SFA.DAS.Payments.Functions.PocClient
 
                         client.SendAsync(message);
 
-                        current = learners.Skip(messageSize).Take(messageSize).ToList();
+                        batchSize += batch;
+
+                        current = learners.Skip(batchSize).Take(batch).ToList();
 
                         current = new List<Earning>();
                     }

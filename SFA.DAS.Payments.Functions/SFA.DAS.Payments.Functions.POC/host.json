@@ -1,7 +1,16 @@
 {
   "durableTask": {
-    "partitionCount": 16,
+    "partitionCount": 4,
     "extendedSessionsEnabled": true,
-    "extendedSessionIdleTimeoutInSeconds": 30
+    "extendedSessionIdleTimeoutInSeconds": 60,
+    "maxConcurrentActivityFunctions": 10,
+    "maxConcurrentOrchestratorFunctions": 10
+  },
+  "logger": {
+    "categoryFilter": {
+      "categoryLevels": {
+        "Host.Triggers.DurableTask": "Information"
+      }
+    }
   }
 }

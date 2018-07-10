@@ -7,7 +7,7 @@ using SFA.DAS.Payments.Domain.DataLock;
 
 namespace SFA.DAS.Payments.Functions.POC
 {
-    public static class ValidateUkprn
+    public static class UkprnMatcher
     {
         [FunctionName("ValidateUkprn")]
         public static Task Run([ActivityTrigger]EarningValidation content)

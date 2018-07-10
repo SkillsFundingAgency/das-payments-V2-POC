@@ -12,7 +12,7 @@ namespace SFA.DAS.Payments.Functions.POC
 {
     public static class DataLockProcessor
     {
-        [FunctionName("DataLockProcessor")]
+        [FunctionName(nameof(DataLockProcessor))]
         public static async Task Run(
             [ServiceBusTrigger("datalockprocessor", Connection = "ServiceBusConnection")]
             string myQueueItem,
@@ -21,18 +21,23 @@ namespace SFA.DAS.Payments.Functions.POC
         {
             try
             {
+                log.Info("DataLockProcessor Starting");
                 // DI
                 var commitmentProvider = new CommitmentProvider();
                 var accountProvider = new AccountProvider();
 
                 var earnings = JsonConvert.DeserializeObject<List<Earning>>(myQueueItem);
+
                 var ukprn = earnings.Select(x => x.Ukprn).FirstOrDefault();
+
                 var commitments = commitmentProvider.GetCommitments(ukprn, earnings.Select(x => x.LearnerReferenceNumber).ToList());
                 var accounts = accountProvider.GetAccounts(commitments.Select(x => x.EmployerAccountId).Distinct().ToList());
 
                 var input = new EarningsInput(ukprn, commitments, earnings, accounts);
 
-                await client.StartNewAsync("EarningsOrchestrator", input);
+                await client.StartNewAsync(nameof(EarningsOrchestrator), input);
+
+                log.Info("DataLockProcessor Finishing");
             }
             catch (Exception e)
             {

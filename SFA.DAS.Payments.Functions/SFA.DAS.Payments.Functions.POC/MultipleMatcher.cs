@@ -7,7 +7,7 @@ using SFA.DAS.Payments.Domain.DataLock;
 
 namespace SFA.DAS.Payments.Functions.POC
 {
-    public static class ValidateMultipleMatch
+    public static class MultipleMatcher
     {
         [FunctionName("ValidateMultipleMatch")]
         public static Task Run([ActivityTrigger]EarningValidation content)
