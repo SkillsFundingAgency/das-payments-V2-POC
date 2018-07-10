@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using SFA.DAS.Payments.Domain;
 
-namespace DataLockActor
+namespace DataLockActor.Storage
 {
     public class StateManagerStorage : ILocalCommitmentCache
     {
@@ -21,17 +23,25 @@ namespace DataLockActor
 
         public async Task Add(string key, IList<Commitment> commitments)
         {
-            await _stateManager.GetOrAddStateAsync(key, commitments);
+            await _stateManager.TryAddStateAsync(key, commitments);
         }
 
         public async Task<IList<Commitment>> Get(string key)
         {
-            return await _stateManager.GetStateAsync<List<Commitment>>(key);
+            try
+            {
+                return await _stateManager.GetStateAsync<List<Commitment>>(key);
+            }
+            catch (KeyNotFoundException)
+            {
+                return null;
+            }
         }
 
         public async Task Update(string key, List<Commitment> commitments)
         {
             await _stateManager.SetStateAsync(key, commitments);
+            await _stateManager.SaveStateAsync();
         }
     }
 }

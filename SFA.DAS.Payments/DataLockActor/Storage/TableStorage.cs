@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using SFA.DAS.Payments.Domain;
 
-namespace DataLockActor
+namespace DataLockActor.Storage
 {
     public class TableStorage : ILocalCommitmentCache
     {
+        private const string ConnectionString = "UseDevelopmentStorage=true";
         private readonly CloudStorageAccount _storageAccount;
 
         public TableStorage()
         {
-            this._storageAccount = CloudStorageAccount.Parse("UseDevelopmentStorage=true");
+            this._storageAccount = CloudStorageAccount.Parse(ConnectionString);
         }
-
 
         public async Task Reset()
         {
-            var table = GetTable();
-            await table.DeleteIfExistsAsync();
-            await table.CreateIfNotExistsAsync();
+            //var table = GetTable();
+            //await table.DeleteIfExistsAsync();
+            //await table.CreateIfNotExistsAsync();
         }
 
         public async Task Add(string key, IList<Commitment> commitments)

@@ -1,10 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/2011/01/fabric">
-  <Section Name="DataLockActorServiceReplicatorConfig">
-    <Parameter Name="ReplicatorEndpoint" Value="DataLockActorServiceReplicatorEndpoint" />
+  <Section Name="DataLockActorSqlReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="DataLockActorSqlReplicatorEndpoint" />
     <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
   </Section>
-  <Section Name="DataLockActorServiceReplicatorSecurityConfig">
+  <Section Name="DataLockActorSqlReplicatorSecurityConfig">
+    <Parameter Name="CredentialType" Value="None" />
+  </Section>
+  <Section Name="DataLockActorStateManagerReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="DataLockActorStateManagerReplicatorEndpoint" />
+    <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+  </Section>
+  <Section Name="DataLockActorStateManagerReplicatorSecurityConfig">
+    <Parameter Name="CredentialType" Value="None" />
+  </Section>
+  <Section Name="DataLockActorTableStorageReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="DataLockActorTableStorageReplicatorEndpoint" />
+    <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
+  </Section>
+  <Section Name="DataLockActorTableStorageReplicatorSecurityConfig">
     <Parameter Name="CredentialType" Value="None" />
   </Section>
   <!-- The content will be generated during build -->

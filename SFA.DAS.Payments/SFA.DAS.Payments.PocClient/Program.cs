@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DataLockActor.Interfaces;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Client;
-using SFA.DAS.Payments.Application.Interfaces;
 
 namespace SFA.DAS.Payments.ServiceFabric.PocClient
 {
@@ -15,44 +12,67 @@ namespace SFA.DAS.Payments.ServiceFabric.PocClient
     {
         static void Main(string[] args)
         {
-
-            var earnings = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners();
-            //EarningProvider.SetEarnings(earnings);
-            //CommitmentProvider.SetCommitments(TestDataGenerator.TestDataGenerator.CreateCommitmentsFromEarnings(earnings));
-            Debug.WriteLine("#,time inside,incl read,incl calc,incl output,incl write,time outside,incl getproxy,incl call");
-            Task.Run(async () =>
+            var earnings = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners(spreadUkprnAcross: 5);
+            bool terminate = false;
+            while (!terminate)
             {
-                try
-                {
-                    var sw1 = Stopwatch.StartNew();
-                    //var avg = new List<long>();
+                //var actorType = "DataLockActorTableStorage";
+                //var actorType = "DataLockActorSql";
+                var actorType = "DataLockActorStateManager";
+                var metricBatchId = DateTime.UtcNow.ToString("s") + " " + actorType;
 
-                    for (var i = 0; i < earnings.Count; i++)
+                Task.Run(async () =>
+                {
+                    try
                     {
-                        var sw2 = Stopwatch.StartNew();
-                        var earning = earnings[i];
-                        var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri("fabric:/SFA.DAS.Payments.DataLock/DataLockActorService"));
+                        //await TestDataGenerator.TestDataGenerator.ResetAndPopulateTableStorage();
+                        //await TestDataGenerator.TestDataGenerator.ResetAndPopulateSqlStorage();
 
-                        var proxyTime = sw2.ElapsedTicks;
-                        sw2.Restart();
+                        var sw1 = Stopwatch.StartNew();
+                        //var avg = new List<long>();
+                        var parts = earnings.Select(e => e.Ukprn).Distinct();
+                        Parallel.ForEach(parts, async ukprn =>
+                        {
+                            var earningsForUkprn = earnings.Where(e => e.Ukprn == ukprn).ToList();
+                            for (var i = 0; i < earningsForUkprn.Count; i++)
+                            {
+                                try
+                                {
+                                    var sw2 = Stopwatch.StartNew();
+                                    var earning = earningsForUkprn[i];
+                                    var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/SFA.DAS.Payments.DataLock/{actorType}"));
 
-                        var metrics = await actor.ProcessEarning(earning);
-                        metrics.OutsideProxy = proxyTime;
-                        metrics.OutsideCall = sw2.ElapsedTicks;
+                                    var proxyTime = sw2.ElapsedTicks;
+                                    sw2.Restart();
 
-                        Debug.WriteLine($"#{i},outside,{metrics.OutsideProxy},{metrics.OutsideCall}, inside, {metrics.InsideRead},{metrics.InsideCalc},{metrics.InsideWrite}");
+                                    var metrics = await actor.ProcessEarning(earning);
+                                    metrics.OutsideProxy = proxyTime;
+                                    metrics.OutsideCall = sw2.ElapsedTicks;
+                                    metrics.BatchId = metricBatchId;
+
+                                    //Debug.WriteLine($"{metrics.Actor}: #{i},outside,{metrics.OutsideProxy},{metrics.OutsideCall}, inside, {metrics.InsideRead},{metrics.InsideCalc},{metrics.InsideWrite}");
+                                    Debug.WriteLine($"{metrics.Actor}-{(double) i / earningsForUkprn.Count:#0%}");
+                                    await TestDataGenerator.TestDataGenerator.WriteMetric(metrics);
+                                }
+                                catch
+                                {
+                                }
+                            }
+
+                        });
+
+                        Debug.WriteLine($"Done full list in {sw1.ElapsedMilliseconds:##,##0}ms");
                     }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                }).Wait();
 
-                    Debug.WriteLine($"Done full list in {sw1.ElapsedMilliseconds:##,##0}ms");
-                }
-                catch (Exception ex)
-                {
-                    throw;
-                }
-            }).Wait();
-
-            Debug.WriteLine("*********************************** finished processing earnings ***********************************");
-            Console.ReadLine();
+                Debug.WriteLine("*********************************** finished processing earnings ***********************************");
+                var line = Console.ReadLine();
+                terminate = line == "Y";
+            }
         }
     }
 }

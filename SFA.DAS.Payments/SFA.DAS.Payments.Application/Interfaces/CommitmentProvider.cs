@@ -23,7 +23,7 @@ namespace SFA.DAS.Payments.Application.Interfaces
         private void Initialise()
         {
             if (_commitments == null)
-                _commitments = TestDataGenerator.TestDataGenerator.CreateCommitmentsFromEarnings();
+                _commitments = TestDataGenerator.TestDataGenerator.CreateCommitmentsFromEarnings(null, 5);
         }
     }
 }

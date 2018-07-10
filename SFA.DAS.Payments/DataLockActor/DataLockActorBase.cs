@@ -1,63 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using DataLockActor.Interfaces;
-using Newtonsoft.Json;
-using SFA.DAS.Payments.Application.Interfaces;
 using SFA.DAS.Payments.Domain;
 using SFA.DAS.Payments.Domain.DataLock.Matcher;
 
 namespace DataLockActor
 {
     [StatePersistence(StatePersistence.Persisted)]
-    internal class DataLockActor : Actor, IDataLockActor
+    internal abstract class DataLockActorBase : Actor, IDataLockActor
     {
-        private readonly long _ukprn;
+        protected  long Ukprn { get; }
+            
+        private static int _actorCounter = 0;
+        private readonly int _actorNumber;
 
-        public DataLockActor(ActorService actorService, ActorId actorId)
+        protected DataLockActorBase(ActorService actorService, ActorId actorId)
             : base(actorService, actorId)
         {
-            _ukprn = actorId.GetLongId();
+            Ukprn = actorId.GetLongId();
+            _actorNumber = ++_actorCounter;
+            Debug.WriteLine($"======================================== actor {_actorNumber}-{Ukprn} created ========================================");
         }
 
-        protected override async Task OnActivateAsync()
-        {
-            ActorEventSource.Current.ActorMessage(this, "Actor activated.");
-
-            // load commitments
-            var sw = Stopwatch.StartNew();
-
-            ICommitmentProvider commitmentProvider = new CommitmentProvider();
-
-            var commitments = commitmentProvider.GetCommitments(_ukprn)
-                .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
-                .ToDictionary(c => c.Key, c => c.ToList());
-
-            Debug.WriteLine($"read from provider in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
-            sw.Restart();
-
-            var cache = GetLocalCache();
-
-            await cache.Reset();
-
-            foreach (var c in commitments)
-            {
-                await cache.Add(c.Key, c.Value);
-            }
-
-            Debug.WriteLine($"saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
-        }
-
-        private ILocalCommitmentCache GetLocalCache()
-        {
-            ILocalCommitmentCache cache = new StateManagerStorage(StateManager);
-            //ILocalCommitmentCache cache = new TableStorage();
-            return cache;
-        }
+        protected abstract ILocalCommitmentCache GetLocalCache();
 
         public async Task<Metric> ProcessEarning(Earning earning)
         {
@@ -65,17 +34,16 @@ namespace DataLockActor
 
             var cache = GetLocalCache();
 
-            var metric = new Metric();
+            var metric = new Metric {Actor = $"#{_actorNumber}({Ukprn})"};
             var payableEarnings = new List<PayableEarning>();
             var nonPayableEarnings = new List<NonPayableEarning>();
-
             var key = string.Concat(earning.Ukprn, "-", earning.LearnerReferenceNumber);
             var commitments = (List<Commitment>) await cache.Get(key);
 
             metric.InsideRead = sw.ElapsedTicks;
             sw.Restart();
 
-            if (commitments != null)
+            if (commitments != null && commitments.Count > 0)
             {
                 // compare
                 var matcher = MatcherFactory.CreateMatcher();
@@ -104,14 +72,16 @@ namespace DataLockActor
                     Earning = earning,
                     Errors = new[] { "DLOCK_02" }
                 });
-
             }
 
             metric.InsideCalc = sw.ElapsedTicks;
             sw.Restart();
 
-            commitments[0].NegotiatedPrice += 100;
-            await cache.Update(key, commitments);
+            if (commitments != null)
+            {
+                commitments[0].NegotiatedPrice += 100;
+                await cache.Update(key, commitments);
+            }
 
             metric.InsideWrite = sw.ElapsedTicks;
             return metric;
