@@ -30,7 +30,8 @@ namespace SFA.DAS.Payments.TestDataGenerator
         {
             var jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
             var directory = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath);
-            var path = Path.Combine(directory, "ALBOutput1000.json");
+            var file = string.Concat(directory.Contains("netcoreapp2.0") ? string.Empty : "..\\", "ALBOutput1000.json");
+            var path = Path.Combine(directory, file);
             return JsonConvert.DeserializeObject<FundingOutputs>(File.ReadAllText(path), jsonSerializerSettings);
         }
 

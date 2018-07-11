@@ -21,13 +21,14 @@ namespace SFA.DAS.Payments.Functions.POC
 
                 var output = new LearnerOutput();
 
-                foreach (var earning in input.Earnings)
+                var inputEarnings = new List<Earning> {input.Earnings.First()};
+
+                foreach (var earning in inputEarnings)
                 {
 
-                    var learnerCommitment = input.Commitments.FirstOrDefault(x => x.LearnerReferenceNumber == earning.LearnerReferenceNumber);
-                    var learnerAccounts = input.Accounts.Where(l => learnerCommitment.Id == l.Id).ToList();
+                    var learnerAccounts = input.Accounts.Where(l => input.Commitments.Select(x => x.EmployerAccountId).Contains(l.Id)).ToList();
 
-                    var earningsInput = new EarningValidation(input.Ukprn, new List<Commitment>{ learnerCommitment}, learnerAccounts, earning);
+                    var earningsInput = new EarningValidation(input.Ukprn, input.Commitments, learnerAccounts, earning);
                     var result = await context.CallSubOrchestratorAsync<MatchResult>(nameof(SequentialValidation), earningsInput);
 
                     if (result.Commitments != null && result.Commitments.Any())
