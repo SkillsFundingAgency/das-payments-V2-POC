@@ -14,5 +14,6 @@ namespace SFA.DAS.Payments.Domain
         public long OutsideProxy { get; set; }
         public long OutsideCall { get; set; }
         public string Actor { get; set; }
+        public double Progress { get; set; }
     }
 }

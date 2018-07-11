@@ -26,7 +26,7 @@ namespace SFA.DAS.Payments.ServiceFabric.PocClient
                     try
                     {
                         //await TestDataGenerator.TestDataGenerator.ResetAndPopulateTableStorage();
-                        //await TestDataGenerator.TestDataGenerator.ResetAndPopulateSqlStorage();
+                        await TestDataGenerator.TestDataGenerator.ResetAndPopulateSqlStorage();
 
                         var sw1 = Stopwatch.StartNew();
                         //var avg = new List<long>();
@@ -40,6 +40,8 @@ namespace SFA.DAS.Payments.ServiceFabric.PocClient
                                 {
                                     var sw2 = Stopwatch.StartNew();
                                     var earning = earningsForUkprn[i];
+                                    //var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/sfa-das-payments-poc.ukwest.cloudapp.azure.com:19000/SFA.DAS.Payments.DataLock/{actorType}"));
+
                                     var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/SFA.DAS.Payments.DataLock/{actorType}"));
 
                                     var proxyTime = sw2.ElapsedTicks;
