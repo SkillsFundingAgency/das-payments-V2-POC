@@ -72,7 +72,7 @@ namespace SFA.DAS.Payments.PocWebClient
             GlobalConfiguration.Configuration.UseSqlServerStorage(TestDataGenerator.TestDataGenerator.SqlStorageConnectionString);
 
             app.UseHangfireServer();
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard(options: new DashboardOptions() {Authorization = new[] {new HangFireAuthorizationFilter()}});
             app.UseHangfireServer(new BackgroundJobServerOptions { ServerName = "SingleNode", WorkerCount = 1 });
 
         }

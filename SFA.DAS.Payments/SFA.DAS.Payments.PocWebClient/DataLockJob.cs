@@ -5,10 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataLockActor.Interfaces;
 using Hangfire.Console;
+using Hangfire.Dashboard;
 using Hangfire.Server;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Client;
 using SFA.DAS.Payments.Domain;
+using Metric = SFA.DAS.Payments.Domain.Metric;
 
 namespace SFA.DAS.Payments.PocWebClient
 {
@@ -65,9 +67,9 @@ namespace SFA.DAS.Payments.PocWebClient
                                     var sw2 = Stopwatch.StartNew();
                                     var earning = earningsForUkprn[i];
 
-                                    //var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/sfa-das-payments-poc.ukwest.cloudapp.azure.com:19000/SFA.DAS.Payments.DataLock/{actorType}"));
+                                    var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/sfa-das-payments-poc.ukwest.cloudapp.azure.com:19000/SFA.DAS.Payments.DataLock/{actorType}"));
 
-                                    var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/SFA.DAS.Payments.DataLock/{actorType}"));
+                                    //var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri($"fabric:/SFA.DAS.Payments.DataLock/{actorType}"));
 
                                     var proxyTime = sw2.ElapsedTicks;
                                     sw2.Restart();
@@ -85,8 +87,10 @@ namespace SFA.DAS.Payments.PocWebClient
 
                                     progress.SetValue(metrics.Progress * 100);
                                 }
-                                catch
+                                catch(Exception ex)
                                 {
+                                    context.WriteLine(ex);
+                                    break;
                                 }
                             }
                         }).Wait();

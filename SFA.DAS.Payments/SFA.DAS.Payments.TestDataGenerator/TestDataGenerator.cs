@@ -18,9 +18,10 @@ namespace SFA.DAS.Payments.TestDataGenerator
 {
     public static class TestDataGenerator
     {
-        private const string TableStorageConnectionString = "UseDevelopmentStorage=true";
-        public const string SqlStorageConnectionString = "Server=.;Database=SFA.DAS.Payments.POC;Trusted_Connection=True";
-        //public const string SqlStorageConnectionString = "Server=tcp:sfa-das-payments-poc.database.windows.net,1433;Initial Catalog=SFA.DAS.Payments.POC;Persist Security Info=False;User ID=SFActor;Password=Vladimir+Dmitry=King_of_all_swaps;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        //private const string TableStorageConnectionString = "UseDevelopmentStorage=true";
+        private const string TableStorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=paymentspoc;AccountKey=prEMq8UAPp12yZfh7sWVV65aJLPXWjAqpBDwBd+IKYqK2i9T8hnvVv9OutxCNvKP5LgkaRWScsaSM7O9rV4RDg==;EndpointSuffix=core.windows.net";
+        //public const string SqlStorageConnectionString = "Server=.;Database=SFA.DAS.Payments.POC;Trusted_Connection=True";
+        public const string SqlStorageConnectionString = "Server=tcp:sfa-das-payments-poc.database.windows.net,1433;Initial Catalog=SFA.DAS.Payments.POC;Persist Security Info=False;User ID=SFActor;Password=Vladimir+Dmitry=King_of_all_swaps;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         private const string MetricConnectionString = SqlStorageConnectionString;
 
         private static readonly Dictionary<int, PropertyInfo> _props = typeof(ILearningDeliveryPeriodisedAttribute).GetProperties(BindingFlags.Public | BindingFlags.Instance)
