@@ -8,5 +8,6 @@ namespace SFA.DAS.Payments.Application.Interfaces
         IReadOnlyList<Commitment> GetCommitments(long ukprn);
 
         List<Commitment> GetCommitments(long ukprn, IReadOnlyList<string> learnerReferenceNumbers);
+        List<Commitment> GetCommitments(long ukprn, IList<Earning> earnings);
     }
 }

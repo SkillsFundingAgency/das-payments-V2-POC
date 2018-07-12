@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -21,7 +20,7 @@ namespace SFA.DAS.Payments.Functions.POC
 
                 var output = new LearnerOutput();
 
-                var inputEarnings = new List<Earning> {input.Earnings.First()};
+                var inputEarnings = input.Earnings;
 
                 foreach (var earning in inputEarnings)
                 {
@@ -29,10 +28,13 @@ namespace SFA.DAS.Payments.Functions.POC
                     var learnerAccounts = input.Accounts.Where(l => input.Commitments.Select(x => x.EmployerAccountId).Contains(l.Id)).ToList();
 
                     var earningsInput = new EarningValidation(input.Ukprn, input.Commitments, learnerAccounts, earning);
+                    log.Info("Sending Request for Validation");
                     var result = await context.CallSubOrchestratorAsync<MatchResult>(nameof(SequentialValidation), earningsInput);
+                    //var result = await context.CallActivityAsync<MatchResult>(nameof(SequentialValidationActivity), earningsInput);
 
                     if (result.Commitments != null && result.Commitments.Any())
                     {
+                        log.Info("Validation result retrieved");
                         var success = !result.ErrorCodes.Any();
 
                         foreach (var commitment in result.Commitments)
