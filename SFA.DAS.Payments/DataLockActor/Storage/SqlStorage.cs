@@ -10,6 +10,7 @@ namespace DataLockActor.Storage
     public class SqlStorage : ILocalCommitmentCache
     {
         private const string ConnectionString = "Server=.;Database=SFA.DAS.Payments.POC;Trusted_Connection=False;User ID=SFActor;Password=SFActor";
+        //private const string ConnectionString = "Server=tcp:sfa-das-payments-poc.database.windows.net,1433;Initial Catalog=SFA.DAS.Payments.POC;Persist Security Info=False;User ID=SFActor;Password=Vladimir+Dmitry=King_of_all_swaps;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
         public async Task Reset()
         {
