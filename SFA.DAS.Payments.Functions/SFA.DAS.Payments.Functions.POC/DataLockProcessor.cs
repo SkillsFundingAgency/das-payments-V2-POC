@@ -30,7 +30,7 @@ namespace SFA.DAS.Payments.Functions.POC
 
                 var ukprn = earnings.Select(x => x.Ukprn).FirstOrDefault();
 
-                var commitments = commitmentProvider.GetCommitments(ukprn, earnings.Select(x => x.LearnerReferenceNumber).ToList());
+                var commitments = commitmentProvider.GetCommitments(ukprn, earnings).ToList();
                 var accounts = accountProvider.GetAccounts(commitments.Select(x => x.EmployerAccountId).Distinct().ToList());
 
                 var input = new EarningsInput(ukprn, commitments, earnings, accounts);

@@ -20,6 +20,16 @@ namespace SFA.DAS.Payments.Application.Interfaces
             return _commitments.Where(c => c.Ukprn == ukprn && learnerReferenceNumbers.Contains(c.LearnerReferenceNumber)).ToList();
         }
 
+        public List<Commitment> GetCommitments(long ukprn, IList<Earning> earnings)
+        {
+            if (_commitments == null)
+            {
+                _commitments = TestDataGenerator.TestDataGenerator.CreateCommitmentsFromEarnings(earnings);
+            }
+
+            return _commitments.ToList();
+        }
+
         private void Initialise()
         {
             if (_commitments == null)
