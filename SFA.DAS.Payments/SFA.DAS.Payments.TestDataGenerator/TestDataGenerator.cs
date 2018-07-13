@@ -13,17 +13,12 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using SFA.DAS.Payments.Domain;
+using SFA.DAS.Payments.Domain.Config;
 
 namespace SFA.DAS.Payments.TestDataGenerator
 {
     public static class TestDataGenerator
     {
-        //private const string TableStorageConnectionString = "UseDevelopmentStorage=true";
-        private const string TableStorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=paymentspoc;AccountKey=prEMq8UAPp12yZfh7sWVV65aJLPXWjAqpBDwBd+IKYqK2i9T8hnvVv9OutxCNvKP5LgkaRWScsaSM7O9rV4RDg==;EndpointSuffix=core.windows.net";
-        //public const string SqlStorageConnectionString = "Server=.;Database=SFA.DAS.Payments.POC;Trusted_Connection=True";
-        public const string SqlStorageConnectionString = "Server=tcp:sfa-das-payments-poc.database.windows.net,1433;Initial Catalog=SFA.DAS.Payments.POC;Persist Security Info=False;User ID=SFActor;Password=Vladimir+Dmitry=King_of_all_swaps;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-        private const string MetricConnectionString = SqlStorageConnectionString;
-
         private static readonly Dictionary<int, PropertyInfo> _props = typeof(ILearningDeliveryPeriodisedAttribute).GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.Name.StartsWith("Period"))
             .ToDictionary(p => int.Parse(p.Name.Replace("Period", null)), p => p);
@@ -32,7 +27,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
         {
             var jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
             var directory = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath);
-            var file = string.Concat(directory.Contains("netcoreapp2.0") ? string.Empty : "..\\", "ALBOutput1000.json");
+            var file = "ALBOutput1000.json";//string.Concat(directory.Contains("netcoreapp2.0") ? string.Empty : "..\\", "ALBOutput1000.json");
             var path = Path.Combine(directory, file);
             return JsonConvert.DeserializeObject<FundingOutputs>(File.ReadAllText(path), jsonSerializerSettings);
         }
@@ -117,7 +112,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
         public static async Task ResetAndPopulateTableStorage()
         {
-            var table = CloudStorageAccount.Parse(TableStorageConnectionString).CreateCloudTableClient().GetTableReference("Commitment");
+            var table = CloudStorageAccount.Parse(Configuration.SqlServerConnectionString).CreateCloudTableClient().GetTableReference("Commitment");
             await table.DeleteIfExistsAsync();
             await table.CreateIfNotExistsAsync();
 
@@ -141,7 +136,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
         public static async Task ResetAndPopulateSqlStorage()
         {
             var commitments = CreateCommitmentsFromEarnings(null, 5);
-            using (var cnn = new SqlConnection(SqlStorageConnectionString))
+            using (var cnn = new SqlConnection(Configuration.SqlServerConnectionString))
             {
                 cnn.Execute(@"truncate table Commitment");
                 await cnn.ExecuteAsync(@"INSERT INTO [dbo].[Commitment]
@@ -183,7 +178,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
         public static async Task WriteMetric(Metric metric)
         {
-            using (var cnn = new SqlConnection(MetricConnectionString))
+            using (var cnn = new SqlConnection(Configuration.SqlServerConnectionString))
             {
                 await cnn.ExecuteAsync(@"INSERT INTO [dbo].[Metric]
                                            ([BatchId]

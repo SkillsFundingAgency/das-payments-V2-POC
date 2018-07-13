@@ -4,18 +4,17 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using SFA.DAS.Payments.Domain;
+using SFA.DAS.Payments.Domain.Config;
 
 namespace DataLockActor.Storage
 {
     public class TableStorage : ILocalCommitmentCache
     {
-        private const string ConnectionString = "DefaultEndpointsProtocol=https;AccountName=paymentspoc;AccountKey=prEMq8UAPp12yZfh7sWVV65aJLPXWjAqpBDwBd+IKYqK2i9T8hnvVv9OutxCNvKP5LgkaRWScsaSM7O9rV4RDg==;EndpointSuffix=core.windows.net";
-        //private const string ConnectionString = "UseDevelopmentStorage=true";
         private readonly CloudStorageAccount _storageAccount;
 
         public TableStorage()
         {
-            this._storageAccount = CloudStorageAccount.Parse(ConnectionString);
+            this._storageAccount = CloudStorageAccount.Parse(Configuration.TableStorageServerConnectionString);
         }
 
         public async Task Reset()

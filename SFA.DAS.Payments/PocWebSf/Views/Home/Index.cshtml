@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container" style="padding-top: 48px; padding-bottom: 48px">
+    <h1>Payments v2 Service Fabric Actors POC</h1>
+    <hr />
+    <p>
+        <a data-actor="DataLockActorStateManager" class="run-job btn btn-primary btn-lg" href="#" role="button">Run Stateful With Reliable Collections >></a>
+    </p>
+    <p>
+        <a data-actor="DataLockActorTableStorage" class="run-job btn-primary btn-lg" href="#" role="button">Run Stateless With Table Storage >></a>
+    </p>
+    <p>
+        <a data-actor="DataLockActorSql" class="run-job btn-primary btn-lg" href="#" role="button">Run Stateless With SQL Server Storage >></a>
+    </p>
+    <hr />
+    <p>
+        this is definitely a SF hosted app!
+    </p>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".run-job").on("click",
+                function(e) {
+                    $(".btn").attr("disabled", "disabled");
+                    $.post("@Url.Action("Start", "Home")",
+                        { type: $(this).data("actor") },
+                        function(r) {
+                            if (r.ok == true) {
+                                location.href = "@Url.Content("/hangfire/jobs/details/")" + r.jobId;
+                                return;
+                            } else {
+                                alert("something went wrong. " + r.error);
+                            }
+                        });
+                    return false;
+                });
+        });
+    </script>
+
+}
