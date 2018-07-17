@@ -20,7 +20,7 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="sfa-das-payments-poc.ukwest.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="31B48289F2537FD9452F0F2F81EA2AE6FC08CF21" FindType="FindByThumbprint" FindValue="31B48289F2537FD9452F0F2F81EA2AE6FC08CF21" StoreLocation="CurrentUser" StoreName="My" />
+  <ClusterConnectionParameters ConnectionEndpoint="sfa-das-payments-poc2.northeurope.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="9A01CE82CD2733DC13F7AA096639CA2522BAF687" FindType="FindByThumbprint" FindValue="31b48289f2537fd9452f0f2f81ea2ae6fc08cf21" StoreLocation="LocalMachine" StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
 </PublishProfile>

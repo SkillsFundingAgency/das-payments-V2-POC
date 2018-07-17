@@ -58,6 +58,8 @@ namespace PocWebSf
                             var progress = context.WriteProgressBar("UKPRN " + ukprn);
                             
                             var earningsForUkprn = earnings.Where(e => e.Ukprn == ukprn).ToList();
+                            long lastMetricsWrite = 0;
+
                             for (var i = 0; i < earningsForUkprn.Count; i++)
                             {
                                 try
@@ -75,13 +77,17 @@ namespace PocWebSf
                                     metrics.OutsideCall = sw2.ElapsedTicks;
                                     metrics.BatchId = metricBatchId;
                                     metrics.Progress = (double) i / earningsForUkprn.Count;
+                                    metrics.WriteMetrics = lastMetricsWrite;
 
                                     //context.WriteLine($"{metrics.Actor}-{metrics.Progress:#0%}");
-                                    
+                                    sw2.Restart();
+
                                     await SFA.DAS.Payments.TestDataGenerator.TestDataGenerator.WriteMetric(metrics);
                                     stats.Add(metrics);
 
                                     progress.SetValue(metrics.Progress * 100);
+
+                                    lastMetricsWrite = sw2.ElapsedTicks;
                                 }
                                 catch(Exception ex)
                                 {

@@ -25,7 +25,7 @@ namespace DataLockActor.Storage
             using (var cnn = new SqlConnection(Configuration.SqlServerConnectionString))
             {
                 var bits = key.Split("-");
-                return (await cnn.QueryAsync<Commitment>("select * from Commitment where Ukprn = @ukprn and LearnerReferenceNumber = @LearnerReferenceNumber", new { ukprn = bits[0], LearnerReferenceNumber = bits[1] })).ToList();
+                return (await cnn.QueryAsync<Commitment>("select * from Commitment with(nolock) where Ukprn = @ukprn and LearnerReferenceNumber = @LearnerReferenceNumber", new { ukprn = bits[0], LearnerReferenceNumber = bits[1] })).ToList();
             }
         }
 

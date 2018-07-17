@@ -112,7 +112,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
         public static async Task ResetAndPopulateTableStorage()
         {
-            var table = CloudStorageAccount.Parse(Configuration.SqlServerConnectionString).CreateCloudTableClient().GetTableReference("Commitment");
+            var table = CloudStorageAccount.Parse(Configuration.TableStorageServerConnectionString).CreateCloudTableClient().GetTableReference("Commitment");
             await table.DeleteIfExistsAsync();
             await table.CreateIfNotExistsAsync();
 
@@ -178,7 +178,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
         public static async Task WriteMetric(Metric metric)
         {
-            using (var cnn = new SqlConnection(Configuration.SqlServerConnectionString))
+            using (var cnn = new SqlConnection(Configuration.MetricsConnectionString))
             {
                 await cnn.ExecuteAsync(@"INSERT INTO [dbo].[Metric]
                                            ([BatchId]
@@ -188,7 +188,9 @@ namespace SFA.DAS.Payments.TestDataGenerator
                                            ,[InsideWrite]
                                            ,[OutsideProxy]
                                            ,[OutsideCall]
-                                           ,[Actor])
+                                           ,[Actor]
+                                           ,[Progress]
+                                           ,[WriteMetrics])
                                      VALUES
                                            (@BatchId,
                                            @Number,
@@ -197,7 +199,9 @@ namespace SFA.DAS.Payments.TestDataGenerator
                                            @InsideWrite,
                                            @OutsideProxy,
                                            @OutsideCall,
-                                           @Actor)"
+                                           @Actor,
+                                           @Progress,
+                                           @WriteMetrics)"
                     , metric);
             }
 

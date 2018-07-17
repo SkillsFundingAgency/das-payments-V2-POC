@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Payments.TestDataGenerator;
 
 namespace PocWebSf
 {
@@ -55,7 +54,6 @@ namespace PocWebSf
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(SFA.DAS.Payments.Domain.Config.Configuration.SqlServerConnectionString);
 
-            app.UseHangfireServer();
             app.UseHangfireDashboard(options: new DashboardOptions() {Authorization = new[] {new HangFireAuthorizationFilter()}});
             app.UseHangfireServer(new BackgroundJobServerOptions {ServerName = "SingleNode", WorkerCount = 1});
         }

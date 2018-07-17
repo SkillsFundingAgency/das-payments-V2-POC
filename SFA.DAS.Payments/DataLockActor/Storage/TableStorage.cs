@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -26,8 +27,9 @@ namespace DataLockActor.Storage
 
         public async Task Add(string key, IList<Commitment> commitments)
         {
-            var tableOperation = TableOperation.Insert(new CommitmentEntity()
+            var tableOperation = TableOperation.Insert(new CommitmentEntity
             {
+                PartitionKey = PartitionKey(key),
                 RowKey = key,
                 Commitments = JsonConvert.SerializeObject(commitments)
             });
@@ -37,6 +39,8 @@ namespace DataLockActor.Storage
         public async Task<IList<Commitment>> Get(string key)
         {
             var json = await this.GetTable().ExecuteAsync(this.GetOperation(key), (TableRequestOptions) null, (OperationContext) null);
+            if (json.HttpStatusCode != (int) HttpStatusCode.OK)
+                return null;
             return JsonConvert.DeserializeObject<List<Commitment>>(((CommitmentEntity)json.Result).Commitments);
         }
 
@@ -57,7 +61,15 @@ namespace DataLockActor.Storage
 
         private TableOperation GetOperation(string key)
         {
-            return TableOperation.Retrieve<CommitmentEntity>("LOCAL", key);
+            return TableOperation.Retrieve<CommitmentEntity>(PartitionKey(key), key);
+        }
+
+        private static string PartitionKey(string key)
+        {
+            var indexOf = key.IndexOf('-');
+            if (indexOf <= 0)
+                return "LOCAL";
+            return key.Substring(0, indexOf);
         }
     }
 

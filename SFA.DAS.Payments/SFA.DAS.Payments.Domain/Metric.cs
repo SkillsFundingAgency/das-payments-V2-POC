@@ -15,5 +15,6 @@ namespace SFA.DAS.Payments.Domain
         public long OutsideCall { get; set; }
         public string Actor { get; set; }
         public double Progress { get; set; }
+        public long WriteMetrics { get; set; }
     }
 }
