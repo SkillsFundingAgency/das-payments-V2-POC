@@ -38,10 +38,19 @@ namespace DataLockActor.Storage
             }
         }
 
-        public async Task Update(string key, List<Commitment> commitments)
+        public async Task<string> Update(string key, List<Commitment> commitments)
         {
+            var sw = Stopwatch.StartNew();
+            var res = string.Empty;
+
             await _stateManager.SetStateAsync(key, commitments);
+
+            res += sw.ElapsedTicks;
+            sw.Restart();
+
             await _stateManager.SaveStateAsync();
+
+            return res + "," + sw.ElapsedTicks;
         }
     }
 }

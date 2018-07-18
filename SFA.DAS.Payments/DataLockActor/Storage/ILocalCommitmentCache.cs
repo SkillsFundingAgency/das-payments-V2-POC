@@ -10,6 +10,6 @@ namespace DataLockActor
         Task Reset();
         Task Add(string key, IList<Commitment> commitments);
         Task<IList<Commitment>> Get(string key);
-        Task Update(string key, List<Commitment> commitments);
+        Task<string> Update(string key, List<Commitment> commitments);
     }
 }

@@ -44,7 +44,7 @@ namespace DataLockActor.Storage
             return JsonConvert.DeserializeObject<List<Commitment>>(((CommitmentEntity)json.Result).Commitments);
         }
 
-        public async Task Update(string key, List<Commitment> commitments)
+        public async Task<string> Update(string key, List<Commitment> commitments)
         {
             var tableOperation = TableOperation.InsertOrReplace(new CommitmentEntity()
             {
@@ -52,6 +52,7 @@ namespace DataLockActor.Storage
                 Commitments = JsonConvert.SerializeObject(commitments)
             });
             await GetTable().ExecuteAsync(tableOperation);
+            return null;
         }
 
         private CloudTable GetTable()

@@ -16,5 +16,6 @@ namespace SFA.DAS.Payments.Domain
         public string Actor { get; set; }
         public double Progress { get; set; }
         public long WriteMetrics { get; set; }
+        public string Other { get; set; }
     }
 }

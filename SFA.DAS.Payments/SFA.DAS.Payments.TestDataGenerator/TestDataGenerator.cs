@@ -190,7 +190,8 @@ namespace SFA.DAS.Payments.TestDataGenerator
                                            ,[OutsideCall]
                                            ,[Actor]
                                            ,[Progress]
-                                           ,[WriteMetrics])
+                                           ,[WriteMetrics]
+                                           ,[Other])
                                      VALUES
                                            (@BatchId,
                                            @Number,
@@ -201,7 +202,8 @@ namespace SFA.DAS.Payments.TestDataGenerator
                                            @OutsideCall,
                                            @Actor,
                                            @Progress,
-                                           @WriteMetrics)"
+                                           @WriteMetrics,
+                                           @Other)"
                     , metric);
             }
 

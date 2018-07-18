@@ -58,9 +58,16 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Types" />
+    <Folder Include="Tables" />
+    <Folder Include="Views" />
+    <Folder Include="StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Commitment.sql" />
-    <Build Include="Metric.sql" />
+    <Build Include="Views\Stats.sql" />
+    <Build Include="Tables\Metric.sql" />
+    <Build Include="Tables\Commitment.sql" />
+    <Build Include="Types\CommitmentType.sql" />
+    <Build Include="StoredProcedures\UpdateCommitments.sql" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
@@ -80,31 +79,11 @@ namespace DataLockActor
             if (commitments != null)
             {
                 commitments[0].NegotiatedPrice += 100;
-                await cache.Update(key, commitments);
+                metric.Other = await cache.Update(key, commitments);
             }
 
             metric.InsideWrite = sw.ElapsedTicks;
             return metric;
-        }
-
-        //private void WritePayableEarnings(List<PayableEarning> payableEarnings, List<NonPayableEarning> nonPayableEarnings)
-        //{
-        //    foreach (var payableEarning in payableEarnings)
-        //    {
-        //        var serializeObject = JsonConvert.SerializeObject(payableEarning);
-        //        //Debug.Write("+");
-        //    }
-
-        //    foreach (var nonPayableEarning in nonPayableEarnings)
-        //    {
-        //        var serializeObject = JsonConvert.SerializeObject(nonPayableEarning);
-        //        //Debug.Write("-");
-        //    }
-        //}
-
-        public Task ProcessCommitment(Commitment commitment)
-        {
-            throw new NotImplementedException();
         }
     }
 }
