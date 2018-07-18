@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.DurableFun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.DurableFunctions.POC", "SFA.DAS.Payments.DurableFunctions.POC\SFA.DAS.Payments.DurableFunctions.POC.csproj", "{51EFEB99-0AD1-419B-93F7-B1663ACDD103}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.ChainedFunctions.POC", "SFA.DAS.Payments.ChainedFunctions.POC\SFA.DAS.Payments.ChainedFunctions.POC.csproj", "{71398156-C369-44D7-B9EF-89E38D3EF555}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.ChainedFunctions.Client.POC", "SFA.DAS.Payments.ChainedFunctions.Client.POC\SFA.DAS.Payments.ChainedFunctions.Client.POC.csproj", "{19F5D602-F627-4041-B475-02DC75083286}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{51EFEB99-0AD1-419B-93F7-B1663ACDD103}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51EFEB99-0AD1-419B-93F7-B1663ACDD103}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51EFEB99-0AD1-419B-93F7-B1663ACDD103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71398156-C369-44D7-B9EF-89E38D3EF555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71398156-C369-44D7-B9EF-89E38D3EF555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71398156-C369-44D7-B9EF-89E38D3EF555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71398156-C369-44D7-B9EF-89E38D3EF555}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F5D602-F627-4041-B475-02DC75083286}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F5D602-F627-4041-B475-02DC75083286}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F5D602-F627-4041-B475-02DC75083286}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F5D602-F627-4041-B475-02DC75083286}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

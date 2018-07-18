@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json;
+using SFA.DAS.Payments.Domain;
 
-namespace SFA.DAS.Payments.Functions.POC
+namespace SFA.DAS.Payments.DurableFunctions.POC
 {
     public static class LearnerOrchestrator
     {

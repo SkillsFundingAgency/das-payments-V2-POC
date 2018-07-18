@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.Payments.Application.Interfaces;
 using SFA.DAS.Payments.Domain;
 
-namespace SFA.DAS.Payments.Functions.POC
+namespace SFA.DAS.Payments.DurableFunctions.POC
 {
     public static class DataLockProcessor
     {

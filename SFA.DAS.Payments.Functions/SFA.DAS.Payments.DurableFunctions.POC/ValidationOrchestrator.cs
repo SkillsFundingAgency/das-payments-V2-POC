@@ -3,7 +3,7 @@ using Microsoft.Azure.WebJobs;
 using SFA.DAS.Payments.Domain;
 using SFA.DAS.Payments.Domain.DataLock.Matcher;
 
-namespace SFA.DAS.Payments.Functions.POC
+namespace SFA.DAS.Payments.DurableFunctions.POC
 {
     public static class ValidationOrchestrator
     {

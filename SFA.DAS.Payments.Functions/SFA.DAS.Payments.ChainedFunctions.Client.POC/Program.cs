@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
-using SFA.DAS.Payments.Domain;
 
-namespace SFA.DAS.Payments.DurableFunctions.Client.POC
+namespace SFA.DAS.Payments.ChainedFunctions.Client.POC
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
 
-            const string queueName = "datalockprocessor";
+            const string queueName = "DataLockProcessor";
             var connectionString = ConfigurationManager.ConnectionStrings["dataLock"].ConnectionString;
 
             var client = new QueueClient(connectionString, queueName);
@@ -30,23 +28,14 @@ namespace SFA.DAS.Payments.DurableFunctions.Client.POC
             {
                 while (!exit)
                 {
-                    var learners = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners();
+                    var earnings = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners();
 
-                    const int batch = 100;
-                    var batchSize = 0;
-                    var current = learners.Skip(batchSize).Take(batch).ToList();
-
-                    while (current.Any())
+                    foreach (var earning in earnings.Take(100))
                     {
-                        var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(current)));
+                        var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(earning)));
 
                         client.SendAsync(message);
 
-                        batchSize += batch;
-
-                        current = learners.Skip(batchSize).Take(batch).ToList();
-
-                        current = new List<Earning>();
                     }
 
                     var res = Console.ReadLine();

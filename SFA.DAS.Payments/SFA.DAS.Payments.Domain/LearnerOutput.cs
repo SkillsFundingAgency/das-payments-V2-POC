@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using SFA.DAS.Payments.Domain;
+﻿using System.Collections.Generic;
 
-namespace SFA.DAS.Payments.Functions.POC
+namespace SFA.DAS.Payments.Domain
 {
     public class LearnerOutput
     {
