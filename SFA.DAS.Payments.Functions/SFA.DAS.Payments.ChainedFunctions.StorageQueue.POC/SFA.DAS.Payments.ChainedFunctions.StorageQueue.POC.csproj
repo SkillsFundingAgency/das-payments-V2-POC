@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+    <AssemblyName>SFA.DAS.Payments.ChainedFunctions.StorageQueue.POC</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="function.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.14" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SFA.DAS.Payments\SFA.DAS.Payments.Application\SFA.DAS.Payments.Application.csproj" />
+    <ProjectReference Include="..\..\SFA.DAS.Payments\SFA.DAS.Payments.Domain\SFA.DAS.Payments.Domain.csproj" />
+    <ProjectReference Include="..\SFA.DAS.Payments.DurableFunctions.POC\SFA.DAS.Payments.DurableFunctions.POC.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -17,6 +17,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.ChainedFun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.ChainedFunctions.Client.POC", "SFA.DAS.Payments.ChainedFunctions.Client.POC\SFA.DAS.Payments.ChainedFunctions.Client.POC.csproj", "{19F5D602-F627-4041-B475-02DC75083286}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chained Functions With Storage Queues", "Chained Functions With Storage Queues", "{75139860-F813-4104-AECD-B6D994C3C6DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.ChainedFunctions.StorageQueue.Client.POC", "SFA.DAS.Payments.ChainedFunctions.StorageQueue.Client.POC\SFA.DAS.Payments.ChainedFunctions.StorageQueue.Client.POC.csproj", "{71A4A578-9080-445E-97C8-A54AFEB1A1FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.ChainedFunctions.StorageQueue.POC", "SFA.DAS.Payments.ChainedFunctions.StorageQueue.POC\SFA.DAS.Payments.ChainedFunctions.StorageQueue.POC.csproj", "{711B47E4-CAB0-4D92-B863-B76B679636F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chained Functions With Service Bus", "Chained Functions With Service Bus", "{D692B97D-C2C6-4311-B9EA-D4C440E1EC04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Durable Functions", "Durable Functions", "{C0300333-B589-492D-9B16-6D759925A31B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,9 +61,25 @@ Global
 		{19F5D602-F627-4041-B475-02DC75083286}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19F5D602-F627-4041-B475-02DC75083286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19F5D602-F627-4041-B475-02DC75083286}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71A4A578-9080-445E-97C8-A54AFEB1A1FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71A4A578-9080-445E-97C8-A54AFEB1A1FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71A4A578-9080-445E-97C8-A54AFEB1A1FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71A4A578-9080-445E-97C8-A54AFEB1A1FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{711B47E4-CAB0-4D92-B863-B76B679636F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{711B47E4-CAB0-4D92-B863-B76B679636F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{711B47E4-CAB0-4D92-B863-B76B679636F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{711B47E4-CAB0-4D92-B863-B76B679636F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DA74CF50-1F56-4323-B16F-3A6D1458C3C3} = {C0300333-B589-492D-9B16-6D759925A31B}
+		{51EFEB99-0AD1-419B-93F7-B1663ACDD103} = {C0300333-B589-492D-9B16-6D759925A31B}
+		{71398156-C369-44D7-B9EF-89E38D3EF555} = {D692B97D-C2C6-4311-B9EA-D4C440E1EC04}
+		{19F5D602-F627-4041-B475-02DC75083286} = {D692B97D-C2C6-4311-B9EA-D4C440E1EC04}
+		{71A4A578-9080-445E-97C8-A54AFEB1A1FF} = {75139860-F813-4104-AECD-B6D994C3C6DB}
+		{711B47E4-CAB0-4D92-B863-B76B679636F8} = {75139860-F813-4104-AECD-B6D994C3C6DB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1340E3F-45FB-40AE-8F3E-8E51528F2057}
