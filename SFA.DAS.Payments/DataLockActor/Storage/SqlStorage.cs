@@ -48,25 +48,25 @@ namespace DataLockActor.Storage
                 timing.Add(sw.ElapsedTicks);
                 sw.Restart();
 
-                var tvp = new CommitmentTvp(commitments);
-                await cnn.ExecuteAsync("[dbo].[UpdateCommitments]", tvp, commandType: CommandType.StoredProcedure);
+                //var tvp = new CommitmentTvp(commitments);
+                //await cnn.ExecuteAsync("[dbo].[UpdateCommitments]", tvp, commandType: CommandType.StoredProcedure);
 
-                //await cnn.ExecuteAsync(@"UPDATE [dbo].[Commitment]
-                //                           SET [ProgrammeType] = @ProgrammeType
-                //                              ,[StandardCode] = @StandardCode
-                //                              ,[FrameworkCode] = @FrameworkCode
-                //                              ,[PathwayCode] = @PathwayCode
-                //                              ,[TransferSenderAccountId] = @TransferSenderAccountId
-                //                              ,[EmployerAccountId] = @EmployerAccountId
-                //                              ,[PaymentStatus] = @PaymentStatus
-                //                              ,[NegotiatedPrice] = @NegotiatedPrice
-                //                              ,[StartDate] = @StartDate
-                //                              ,[EndDate] = @EndDate
-                //                              ,[EffectiveFrom] = @EffectiveFrom
-                //                              ,[EffectiveTo] = @EffectiveTo
-                //                              ,[Uln] = @Uln
-                //                         WHERE Ukprn = @Ukprn and LearnerReferenceNumber = @LearnerReferenceNumber", 
-                //    commitments);
+                await cnn.ExecuteAsync(@"UPDATE [dbo].[Commitment]
+                                           SET [ProgrammeType] = @ProgrammeType
+                                              ,[StandardCode] = @StandardCode
+                                              ,[FrameworkCode] = @FrameworkCode
+                                              ,[PathwayCode] = @PathwayCode
+                                              ,[TransferSenderAccountId] = @TransferSenderAccountId
+                                              ,[EmployerAccountId] = @EmployerAccountId
+                                              ,[PaymentStatus] = @PaymentStatus
+                                              ,[NegotiatedPrice] = @NegotiatedPrice
+                                              ,[StartDate] = @StartDate
+                                              ,[EndDate] = @EndDate
+                                              ,[EffectiveFrom] = @EffectiveFrom
+                                              ,[EffectiveTo] = @EffectiveTo
+                                              ,[Uln] = @Uln
+                                         WHERE Ukprn = @Ukprn and LearnerReferenceNumber = @LearnerReferenceNumber",
+                    commitments[0]);
 
                 timing.Add(sw.ElapsedTicks);
                 sw.Restart();

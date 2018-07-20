@@ -12,7 +12,7 @@ namespace SFA.DAS.Payments.ServiceFabric.PocClient
     {
         static void Main(string[] args)
         {
-            var earnings = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners(spreadUkprnAcross: 5);
+            var earnings = TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners();
             bool terminate = false;
             while (!terminate)
             {

@@ -26,7 +26,7 @@ namespace PocWebSf
 
             context.WriteLine($"New batch {metricBatchId}. Creating earnings... ");
 
-            var earnings = SFA.DAS.Payments.TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners(spreadUkprnAcross: 5);
+            var earnings = SFA.DAS.Payments.TestDataGenerator.TestDataGenerator.CreateEarningsFromLearners();
 
             context.WriteLine($"{earnings.Count} earnings created.");
 

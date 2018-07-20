@@ -37,7 +37,7 @@ namespace SFA.DAS.Payments.Domain
         public int PaymentStatus { get; set; }
 
         [DataMember]
-        public decimal NegotiatedPrice { get; set; }
+        public long NegotiatedPrice { get; set; }
 
         [DataMember]
         public DateTime StartDate { get; set; }

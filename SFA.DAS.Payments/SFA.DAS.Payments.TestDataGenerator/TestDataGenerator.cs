@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using Dapper;
 using ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model;
 using ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model.Interface;
 using ESFA.DC.ILR.FundingService.ALB.FundingOutput.Model.Interface.Attribute;
+using FastMember;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
@@ -25,14 +27,21 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
         public static IFundingOutputs Create1000Learners()
         {
-            var jsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+            var jsonSerializerSettings = new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Auto};
             var directory = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath);
-            var file = "ALBOutput1000.json";//string.Concat(directory.Contains("netcoreapp2.0") ? string.Empty : "..\\", "ALBOutput1000.json");
+            var file = "ALBOutput1000.json"; //string.Concat(directory.Contains("netcoreapp2.0") ? string.Empty : "..\\", "ALBOutput1000.json");
             var path = Path.Combine(directory, file);
-            return JsonConvert.DeserializeObject<FundingOutputs>(File.ReadAllText(path), jsonSerializerSettings);
+            var output = JsonConvert.DeserializeObject<FundingOutputs>(File.ReadAllText(path), jsonSerializerSettings);
+            var learners = new List<ILearnerAttribute>();
+            for (var i = 0; i < Configuration.AmplifyEarnings; i++)
+            {
+                learners.AddRange(output.Learners);
+            }
+            var result = new FundingOutputs {Global = output.Global, Learners = learners.ToArray()};
+            return result;
         }
 
-        public static List<Earning> CreateEarningsFromLearners(IFundingOutputs fundingOutputs = null, string collectionPeriod = "1718-R11", int spreadUkprnAcross = 1)
+        public static List<Earning> CreateEarningsFromLearners(IFundingOutputs fundingOutputs = null, string collectionPeriod = "1718-R11")
         {
             var deliveryPeriodPrefix = collectionPeriod.Substring(0, 6);
 
@@ -45,7 +54,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
             foreach (var learner in fundingOutputs.Learners)
             {
-                if (++ukprnIncrement >= spreadUkprnAcross)
+                if (++ukprnIncrement >= Configuration.NumberOfProviders)
                     ukprnIncrement = 0;
 
                 foreach (var learningDeliveryAttribute in learner.LearningDeliveryAttributes)
@@ -78,10 +87,10 @@ namespace SFA.DAS.Payments.TestDataGenerator
             return result;
         }
 
-        public static IList<Commitment> CreateCommitmentsFromEarnings(IList<Earning> earnings = null, int spreadUkprnAcross = 1)
+        public static IList<Commitment> CreateCommitmentsFromEarnings(IList<Earning> earnings = null)
         {
             if (earnings == null)
-                earnings = CreateEarningsFromLearners(spreadUkprnAcross: spreadUkprnAcross);
+                earnings = CreateEarningsFromLearners();
 
             var random = new Random();
             var i = 0;
@@ -101,7 +110,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
                 StartDate = DateTime.Today,
                 EndDate = DateTime.Today,
                 Uln = e.Uln ?? 0,
-                NegotiatedPrice = e.Amount
+                NegotiatedPrice = Convert.ToInt64(e.Amount)
             }).ToList();
         }
 
@@ -116,7 +125,7 @@ namespace SFA.DAS.Payments.TestDataGenerator
             await table.DeleteIfExistsAsync();
             await table.CreateIfNotExistsAsync();
 
-            var commitments = CreateCommitmentsFromEarnings(null, 5)
+            var commitments = CreateCommitmentsFromEarnings()
                 .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
                 .ToDictionary(c => c.Key, c => c.ToList());
 
@@ -135,44 +144,111 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
         public static async Task ResetAndPopulateSqlStorage()
         {
-            var commitments = CreateCommitmentsFromEarnings(null, 5);
+            var commitments = CreateCommitmentsFromEarnings();
             using (var cnn = new SqlConnection(Configuration.SqlServerConnectionString))
             {
                 cnn.Execute(@"truncate table Commitment");
-                await cnn.ExecuteAsync(@"INSERT INTO [dbo].[Commitment]
-                                   ([Id]
-                                   ,[ProgrammeType]
-                                   ,[StandardCode]
-                                   ,[FrameworkCode]
-                                   ,[PathwayCode]
-                                   ,[Ukprn]
-                                   ,[LearnerReferenceNumber]
-                                   ,[TransferSenderAccountId]
-                                   ,[EmployerAccountId]
-                                   ,[PaymentStatus]
-                                   ,[NegotiatedPrice]
-                                   ,[StartDate]
-                                   ,[EndDate]
-                                   ,[EffectiveFrom]
-                                   ,[EffectiveTo]
-                                   ,[Uln])
-                             VALUES
-                                   (@Id
-                                   ,@ProgrammeType
-                                   ,@StandardCode
-                                   ,@FrameworkCode
-                                   ,@PathwayCode
-                                   ,@Ukprn
-                                   ,@LearnerReferenceNumber
-                                   ,@TransferSenderAccountId
-                                   ,@EmployerAccountId
-                                   ,@PaymentStatus
-                                   ,@NegotiatedPrice
-                                   ,@StartDate
-                                   ,@EndDate
-                                   ,@EffectiveFrom
-                                   ,@EffectiveTo
-                                   ,@Uln)", commitments);
+                using (var bulkCopy = new SqlBulkCopy(cnn))
+                using (var reader = ObjectReader.Create(commitments,
+                    "Id",
+                    "ProgrammeType",
+                    "StandardCode",
+                    "FrameworkCode",
+                    "PathwayCode",
+                    "Ukprn",
+                    "LearnerReferenceNumber",
+                    "TransferSenderAccountId",
+                    "EmployerAccountId",
+                    "PaymentStatus",
+                    "NegotiatedPrice",
+                    "StartDate",
+                    "EndDate",
+                    "EffectiveFrom",
+                    "EffectiveTo",
+                    "Uln"))
+                {
+                    bulkCopy.BatchSize = 4000;
+                    bulkCopy.DestinationTableName = "Commitment";
+
+                    //var table = new DataTable();
+                    //table.Columns.Add("Id", typeof(long));
+                    //table.Columns.Add("ProgrammeType", typeof(int));
+                    //table.Columns.Add("StandardCode", typeof(long));
+                    //table.Columns.Add("FrameworkCode", typeof(int));
+                    //table.Columns.Add("PathwayCode", typeof(int));
+                    //table.Columns.Add("Ukprn", typeof(long));
+                    //table.Columns.Add("LearnerReferenceNumber", typeof(string));
+                    //table.Columns.Add("TransferSenderAccountId", typeof(long));
+                    //table.Columns.Add("EmployerAccountId", typeof(long));
+                    //table.Columns.Add("PaymentStatus", typeof(int));
+                    //table.Columns.Add("NegotiatedPrice", typeof(long));
+                    //table.Columns.Add("StartDate", typeof(DateTime));
+                    //table.Columns.Add("EndDate", typeof(DateTime));
+                    //table.Columns.Add("EffectiveFrom", typeof(DateTime));
+                    //table.Columns.Add("EffectiveTo", typeof(DateTime));
+                    //table.Columns.Add("Uln", typeof(long));
+
+                    bulkCopy.ColumnMappings.Add("Id", "Id");
+                    bulkCopy.ColumnMappings.Add("ProgrammeType", "ProgrammeType");
+                    bulkCopy.ColumnMappings.Add("StandardCode", "StandardCode");
+                    bulkCopy.ColumnMappings.Add("FrameworkCode", "FrameworkCode");
+                    bulkCopy.ColumnMappings.Add("PathwayCode", "PathwayCode");
+                    bulkCopy.ColumnMappings.Add("Ukprn", "Ukprn");
+                    bulkCopy.ColumnMappings.Add("LearnerReferenceNumber", "LearnerReferenceNumber");
+                    bulkCopy.ColumnMappings.Add("TransferSenderAccountId", "TransferSenderAccountId");
+                    bulkCopy.ColumnMappings.Add("EmployerAccountId", "EmployerAccountId");
+                    bulkCopy.ColumnMappings.Add("PaymentStatus", "PaymentStatus");
+                    bulkCopy.ColumnMappings.Add("NegotiatedPrice", "NegotiatedPrice");
+                    bulkCopy.ColumnMappings.Add("StartDate", "StartDate");
+                    bulkCopy.ColumnMappings.Add("EndDate", "EndDate");
+                    bulkCopy.ColumnMappings.Add("EffectiveFrom", "EffectiveFrom");
+                    bulkCopy.ColumnMappings.Add("EffectiveTo", "EffectiveTo");
+                    bulkCopy.ColumnMappings.Add("Uln", "Uln");
+
+
+                    //foreach (var c in commitments)
+                    //{
+                    //    table.Rows.Add(c);
+                    //}
+
+                    cnn.Open();
+                    await bulkCopy.WriteToServerAsync(reader);
+                }
+
+                //await cnn.ExecuteAsync(@"INSERT INTO [dbo].[Commitment]
+                //                   ([Id]
+                //                   ,[ProgrammeType]
+                //                   ,[StandardCode]
+                //                   ,[FrameworkCode]
+                //                   ,[PathwayCode]
+                //                   ,[Ukprn]
+                //                   ,[LearnerReferenceNumber]
+                //                   ,[TransferSenderAccountId]
+                //                   ,[EmployerAccountId]
+                //                   ,[PaymentStatus]
+                //                   ,[NegotiatedPrice]
+                //                   ,[StartDate]
+                //                   ,[EndDate]
+                //                   ,[EffectiveFrom]
+                //                   ,[EffectiveTo]
+                //                   ,[Uln])
+                //             VALUES
+                //                   (@Id
+                //                   ,@ProgrammeType
+                //                   ,@StandardCode
+                //                   ,@FrameworkCode
+                //                   ,@PathwayCode
+                //                   ,@Ukprn
+                //                   ,@LearnerReferenceNumber
+                //                   ,@TransferSenderAccountId
+                //                   ,@EmployerAccountId
+                //                   ,@PaymentStatus
+                //                   ,@NegotiatedPrice
+                //                   ,@StartDate
+                //                   ,@EndDate
+                //                   ,@EffectiveFrom
+                //                   ,@EffectiveTo
+                //                   ,@Uln)", commitments);
             }
         }
 
