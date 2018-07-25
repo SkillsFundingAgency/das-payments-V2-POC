@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
@@ -13,7 +12,12 @@ namespace SFA.DAS.Payments.ChainedFunctions.StorageQueue.Client.POC
         private static void Main(string[] args)
         {
 
-            const string queueName = "datalockprocessor";
+            Console.WriteLine("Press D to send all messages to multi-function method and S for single function");
+
+            var method = Console.ReadLine();
+
+            var queueName = method == "D" ? "DataLockProcessor" : "singulardatalockprocessor";
+
             var connectionString = ConfigurationManager.ConnectionStrings["dataLock"].ConnectionString;
 
             var storageAccount = CloudStorageAccount.Parse(connectionString);
@@ -41,6 +45,7 @@ namespace SFA.DAS.Payments.ChainedFunctions.StorageQueue.Client.POC
 
                     foreach (var earning in earnings.Take(100))
                     {
+                        earning.EnqueueTime = DateTime.Now;
                         var message = new CloudQueueMessage(JsonConvert.SerializeObject(earning));
 
                         queue.AddMessageAsync(message);

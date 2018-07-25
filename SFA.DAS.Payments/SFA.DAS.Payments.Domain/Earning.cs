@@ -27,5 +27,7 @@ namespace SFA.DAS.Payments.Domain
         public decimal? NegotiatedPrice { get; set; }
         public int? ProgrammeType { get; set; }
         public long? Uln { get; set; }
+
+        public DateTime EnqueueTime { get; set; }
     }
 }

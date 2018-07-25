@@ -1,6 +1,5 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Newtonsoft.Json;
 using SFA.DAS.Payments.Domain;
 using SFA.DAS.Payments.Domain.DataLock.Matcher;
 
@@ -10,24 +9,21 @@ namespace SFA.DAS.Payments.ChainedFunctions.POC
     {
         [FunctionName(nameof(SequentialValidation))]
         [return: ServiceBus("earningoutput", Connection = "ServiceBusConnection")]
-        public static MatchResult Run(
-            //[HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req, 
-            [ServiceBusTrigger("sequentialvalidation", Connection = "ServiceBusConnection")]string request,
+        public static EarningValidation Run(
+            [ServiceBusTrigger("sequentialvalidation", Connection = "ServiceBusConnection")]EarningValidation input,
             TraceWriter log)
         {
-            log.Info("SequentialValidation Starting");
+            log.Info($"SequentialValidationStarting.UKPRN={input.Earning.Ukprn},ULN={input.Earning.Uln},LearnerRefNumber={input.Earning.LearnerReferenceNumber}");
 
             var factory = MatcherFactory.CreateMatcher();
 
-            //var requestBody = new StreamReader(req.Body).ReadToEnd();
-
-            var input = JsonConvert.DeserializeObject<EarningValidation>(request);
-
             var result = factory.Match(input.Commitments, input.Earning, input.Accounts);
 
-            log.Info("SequentialValidation Finishing");
+            input.MatchResult = result;
 
-            return result;
+            log.Info($"SequentialValidationFinishing.UKPRN={input.Earning.Ukprn},ULN={input.Earning.Uln},LearnerRefNumber={input.Earning.LearnerReferenceNumber}");
+
+            return input;
         }
     }
 }

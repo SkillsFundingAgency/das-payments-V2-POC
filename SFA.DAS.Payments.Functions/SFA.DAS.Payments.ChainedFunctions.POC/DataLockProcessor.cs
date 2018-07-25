@@ -17,16 +17,14 @@ namespace SFA.DAS.Payments.ChainedFunctions.POC
             [ServiceBusTrigger("datalockprocessor", Connection = "ServiceBusConnection")]string request,
             TraceWriter log)
         {
-            log.Info("DataLockProcessor Starting");
-
+ 
             // DI
             var commitmentProvider = new CommitmentProvider();
             var accountProvider = new AccountProvider();
 
-            //var requestBody = new StreamReader(req.Body).ReadToEnd();
-            
             var earning = JsonConvert.DeserializeObject<Earning>(request);
 
+            log.Info($"DataLockProcessorStarting.UKPRN={earning.Ukprn},ULN={earning.Uln},LearnerRefNumber={earning.LearnerReferenceNumber}");
             var earnings = new List<Earning>{earning};
 
             var ukprn = earning.Ukprn;
@@ -34,7 +32,7 @@ namespace SFA.DAS.Payments.ChainedFunctions.POC
             var commitments = commitmentProvider.GetCommitments(ukprn, earnings).ToList();
             var accounts = accountProvider.GetAccounts(commitments.Select(x => x.EmployerAccountId).Distinct().ToList());
 
-            log.Info("DataLockProcessor Finishing");
+            log.Info($"DataLockProcessorFinishing.UKPRN={earning.Ukprn},ULN={earning.Uln},LearnerRefNumber={earning.LearnerReferenceNumber}");
 
             return new EarningValidation(ukprn, commitments, accounts, earning);
         }

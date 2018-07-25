@@ -1,7 +1,6 @@
 using System.Linq;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Newtonsoft.Json;
 using SFA.DAS.Payments.Domain;
 
 namespace SFA.DAS.Payments.ChainedFunctions.POC
@@ -11,14 +10,10 @@ namespace SFA.DAS.Payments.ChainedFunctions.POC
         [FunctionName("earningoutput")]
         [return: ServiceBus("learneroutput", Connection = "ServiceBusConnection")]
         public static LearnerOutput Run(
-            //[HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req, 
-            [ServiceBusTrigger("earningoutput", Connection = "ServiceBusConnection")]string request,
+            [ServiceBusTrigger("earningoutput", Connection = "ServiceBusConnection")]EarningValidation result,
             TraceWriter log)
         {
-            log.Info("EarningOutput Starting");
-
-          //  var requestBody = new StreamReader(req.Body).ReadToEnd();
-            var result = JsonConvert.DeserializeObject<EarningValidation>(request);
+            log.Info($"EarningOutputStarting.UKPRN={result.Earning.Ukprn},ULN={result.Earning.Uln},LearnerRefNumber={result.Earning.LearnerReferenceNumber}");
 
             var output = new LearnerOutput();
 
@@ -44,6 +39,8 @@ namespace SFA.DAS.Payments.ChainedFunctions.POC
                     }
                 }
             }
+
+            log.Info($"EarningOutputStarting.UKPRN={result.Earning.Ukprn},ULN={result.Earning.Uln},LearnerRefNumber={result.Earning.LearnerReferenceNumber}");
 
             return output;
         }

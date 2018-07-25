@@ -1,0 +1,11 @@
+{
+    "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "StorageConnectionString": "UseDevelopmentStorage=true",
+    //"ServiceBusConnection": "Endpoint=sb://functionpoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=/H2LldmBmiE1y0l20BRjMahLKAyMl1LM9VZImUHd79Q=",
+    "ServiceBusConnection": "Endpoint=sb://chainedfunctionservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=tsIO0ADA5ZPOX7mRsSpy70Kc/1pyPbiAbh8k9LRH6bY="
+  }
+}

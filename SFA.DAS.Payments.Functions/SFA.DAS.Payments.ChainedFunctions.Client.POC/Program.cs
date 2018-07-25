@@ -11,12 +11,15 @@ namespace SFA.DAS.Payments.ChainedFunctions.Client.POC
     {
         private static void Main(string[] args)
         {
+            Console.WriteLine("Press D to send all messages to multi-function method and S for single function");
 
-            const string queueName = "DataLockProcessor";
+            var method = Console.ReadLine();
+
+            var queueName = method == "D" ? "DataLockProcessor" : "singulardatalockprocessor";
+
             var connectionString = ConfigurationManager.ConnectionStrings["dataLock"].ConnectionString;
 
             var client = new QueueClient(connectionString, queueName);
-
 
             var exit = false;
 
@@ -32,6 +35,7 @@ namespace SFA.DAS.Payments.ChainedFunctions.Client.POC
 
                     foreach (var earning in earnings.Take(100))
                     {
+                        earning.EnqueueTime = DateTime.Now;
                         var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(earning)));
 
                         client.SendAsync(message);

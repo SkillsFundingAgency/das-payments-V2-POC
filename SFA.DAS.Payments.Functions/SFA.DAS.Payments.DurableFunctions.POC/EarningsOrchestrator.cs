@@ -24,13 +24,12 @@ namespace SFA.DAS.Payments.DurableFunctions.POC
 
                 foreach (var earning in inputEarnings)
                 {
-
+                    log.Info($"EarningsOrchestratorStarting.UKPRN={earning.Ukprn},ULN={earning.Uln},LearnerRefNumber={earning.LearnerReferenceNumber}");
                     var learnerAccounts = input.Accounts.Where(l => input.Commitments.Select(x => x.EmployerAccountId).Contains(l.Id)).ToList();
 
                     var earningsInput = new EarningValidation(input.Ukprn, input.Commitments, learnerAccounts, earning);
                     log.Info("Sending Request for Validation");
                     var result = await context.CallSubOrchestratorAsync<MatchResult>(nameof(SequentialValidation), earningsInput);
-                    //var result = await context.CallActivityAsync<MatchResult>(nameof(SequentialValidationActivity), earningsInput);
 
                     if (result.Commitments != null && result.Commitments.Any())
                     {
@@ -51,6 +50,7 @@ namespace SFA.DAS.Payments.DurableFunctions.POC
                             }
                         }
                     }
+                    log.Info($"EarningsOrchestratorFinishing.UKPRN={earning.Ukprn},ULN={earning.Uln},LearnerRefNumber={earning.LearnerReferenceNumber}");
                 }
 
                 log.Info("Earnings Orchestrator Finishing");

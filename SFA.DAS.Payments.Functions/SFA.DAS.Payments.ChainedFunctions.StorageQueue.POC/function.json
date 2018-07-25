@@ -1,4 +1,19 @@
 {
   "disabled": false,
-  "bindings": []
+  "bindings": [
+        {
+          "name": "request",
+          "type": "queueTrigger",
+          "direction": "in",
+          "queueName": "singulardatalockprocessor",
+          "connection": "StorageConnectionString"
+        },
+        {
+          "type": "queue",
+          "name": "$return",
+          "queueName": "learneroutput",
+          "connection": "StorageConnectionString",
+          "direction": "out"
+        }
+  ]
 }
