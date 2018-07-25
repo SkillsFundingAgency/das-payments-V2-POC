@@ -17,7 +17,7 @@
     </StatefulServiceType>
     <StatefulServiceType ServiceTypeName="DataLockActorStateManagerType">
       <Extensions>
-        <Extension Name="__GeneratedServiceType__" GeneratedId="86c2af9f-a334-4f5a-86e5-37cae0ba0046|None">
+        <Extension Name="__GeneratedServiceType__" GeneratedId="de32ae84-2e0c-4967-9de6-1096b930353b|Volatile">
           <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
             <DefaultService Name="DataLockActorStateManager" />
             <ReplicatorEndpoint Name="DataLockActorStateManagerReplicatorEndpoint" />

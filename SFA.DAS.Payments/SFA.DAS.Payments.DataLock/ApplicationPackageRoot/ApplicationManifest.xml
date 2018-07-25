@@ -5,8 +5,8 @@
     <Parameter Name="DataLockActorSql_MinReplicaSetSize" DefaultValue="1" />
     <Parameter Name="DataLockActorSql_TargetReplicaSetSize" DefaultValue="1" />
     <Parameter Name="DataLockActorStateManager_PartitionCount" DefaultValue="10" />
-    <Parameter Name="DataLockActorStateManager_MinReplicaSetSize" DefaultValue="1" />
-    <Parameter Name="DataLockActorStateManager_TargetReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="DataLockActorStateManager_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="DataLockActorStateManager_TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="DataLockActorTableStorage_PartitionCount" DefaultValue="10" />
     <Parameter Name="DataLockActorTableStorage_MinReplicaSetSize" DefaultValue="1" />
     <Parameter Name="DataLockActorTableStorage_TargetReplicaSetSize" DefaultValue="1" />
@@ -23,7 +23,7 @@
         <UniformInt64Partition PartitionCount="[DataLockActorSql_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
-    <Service Name="DataLockActorStateManager" GeneratedIdRef="86c2af9f-a334-4f5a-86e5-37cae0ba0046|None">
+    <Service Name="DataLockActorStateManager" GeneratedIdRef="de32ae84-2e0c-4967-9de6-1096b930353b|Volatile">
       <StatefulService ServiceTypeName="DataLockActorStateManagerType" TargetReplicaSetSize="[DataLockActorStateManager_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorStateManager_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[DataLockActorStateManager_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>

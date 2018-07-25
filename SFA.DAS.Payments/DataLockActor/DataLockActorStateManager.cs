@@ -5,9 +5,11 @@ using DataLockActor.Storage;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using SFA.DAS.Payments.Application.Interfaces;
+using SFA.DAS.Payments.TestDataGenerator;
 
 namespace DataLockActor
 {
+    [StatePersistence(StatePersistence.Volatile)]
     [ActorService(Name = "DataLockActorStateManager")]
     internal class DataLockActorStateManager : DataLockActorBase
     {
@@ -20,7 +22,7 @@ namespace DataLockActor
         {
             return new StateManagerStorage(StateManager);
         }
-        
+
         protected override async Task OnActivateAsync()
         {
             ActorEventSource.Current.ActorMessage(this, "Actor activated.");
@@ -31,9 +33,13 @@ namespace DataLockActor
             var stateNames = await StateManager.GetStateNamesAsync();
             if (stateNames != null && stateNames.Any())
             {
-                Debug.WriteLine($"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! skiping initialisation, state has {stateNames.Count()} keys !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
+                TestDataGenerator.Log("DataLockActorStateManager", $"skiping initialisation, state has {stateNames.Count()} keys");
+                Debug.WriteLine($"?????????????????????????????????? skiping initialisation, state has {stateNames.Count()} keys ?????????????????????????????????? ");
                 return;
             }
+
+            TestDataGenerator.Log("DataLockActorStateManager", $" initialising, state has no keys keys");
+            Debug.WriteLine($"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! initialising, state has no keys keys !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ");
 
             var cache = GetLocalCache();
 
@@ -56,6 +62,7 @@ namespace DataLockActor
             }
 
             Debug.WriteLine($"saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
+            TestDataGenerator.Log("DataLockActorStateManager", $" saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
         }
     }
 }

@@ -285,5 +285,19 @@ namespace SFA.DAS.Payments.TestDataGenerator
 
         }
 
+        public static async void Log(string logger, string log)
+        {
+            //using (var cnn = new SqlConnection(Configuration.MetricsConnectionString))
+            //{
+            //    await cnn.ExecuteAsync(@"INSERT INTO [dbo].[Log]
+            //                               ([Logger]
+            //                               ,[Text])
+            //                         VALUES
+            //                               (@logger,
+            //                               @log)"
+            //        , new {logger, log});
+            //}
+        }
+
     }
 }

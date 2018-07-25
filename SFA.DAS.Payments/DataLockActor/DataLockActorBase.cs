@@ -6,6 +6,7 @@ using Microsoft.ServiceFabric.Actors.Runtime;
 using DataLockActor.Interfaces;
 using SFA.DAS.Payments.Domain;
 using SFA.DAS.Payments.Domain.DataLock.Matcher;
+using SFA.DAS.Payments.TestDataGenerator;
 
 namespace DataLockActor
 {
@@ -23,6 +24,7 @@ namespace DataLockActor
             Ukprn = actorId.GetLongId();
             _actorNumber = ++_actorCounter;
             Debug.WriteLine($"======================================== actor {_actorNumber}-{Ukprn} created ========================================");
+            TestDataGenerator.Log("DataLockActorBase", $"actor {_actorNumber}-{Ukprn} created");
         }
 
         protected abstract ILocalCommitmentCache GetLocalCache();
