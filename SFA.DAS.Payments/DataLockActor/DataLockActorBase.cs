@@ -13,7 +13,7 @@ namespace DataLockActor
     [StatePersistence(StatePersistence.Persisted)]
     internal abstract class DataLockActorBase : Actor, IDataLockActor
     {
-        protected  long Ukprn { get; }
+        protected  long Ukprn { get; set; }
             
         private static int _actorCounter = 0;
         private readonly int _actorNumber;
@@ -21,7 +21,7 @@ namespace DataLockActor
         protected DataLockActorBase(ActorService actorService, ActorId actorId)
             : base(actorService, actorId)
         {
-            Ukprn = actorId.GetLongId();
+            Ukprn = actorId.GetLongId();            
             _actorNumber = ++_actorCounter;
             Debug.WriteLine($"======================================== actor {_actorNumber}-{Ukprn} created ========================================");
             TestDataGenerator.Log("DataLockActorBase", $"actor {_actorNumber}-{Ukprn} created");
@@ -35,7 +35,7 @@ namespace DataLockActor
 
             var cache = GetLocalCache();
 
-            var metric = new Metric {Actor = $"#{_actorNumber}({Ukprn})"};
+            var metric = new Metric {Actor = $"#{_actorNumber}({earning.Ukprn})"};
             var payableEarnings = new List<PayableEarning>();
             var nonPayableEarnings = new List<NonPayableEarning>();
             var key = string.Concat(earning.Ukprn, "-", earning.LearnerReferenceNumber);
@@ -44,8 +44,8 @@ namespace DataLockActor
             metric.InsideRead = sw.ElapsedTicks;
             sw.Restart();
 
-            if (commitments != null && commitments.Count > 0)
-            {
+            //if (commitments != null && commitments.Count > 0)
+            //{
                 // compare
                 var matcher = MatcherFactory.CreateMatcher();
                 var accounts = new List<Account>();
@@ -65,24 +65,24 @@ namespace DataLockActor
                         Earning = earning,
                         Errors = matchResult.ErrorCodes
                     });
-            }
-            else
-            {
-                nonPayableEarnings.Add(new NonPayableEarning
-                {
-                    Earning = earning,
-                    Errors = new[] { "DLOCK_02" }
-                });
-            }
+            //}
+            //else
+            //{
+            //    nonPayableEarnings.Add(new NonPayableEarning
+            //    {
+            //        Earning = earning,
+            //        Errors = new[] { "DLOCK_02" }
+            //    });
+            //}
 
             metric.InsideCalc = sw.ElapsedTicks;
             sw.Restart();
 
-            if (commitments != null)
-            {
+            //if (commitments != null)
+            //{
                 commitments[0].NegotiatedPrice += 100;
                 metric.Other = await cache.Update(key, commitments);
-            }
+            //}
 
             metric.InsideWrite = sw.ElapsedTicks;
             return metric;

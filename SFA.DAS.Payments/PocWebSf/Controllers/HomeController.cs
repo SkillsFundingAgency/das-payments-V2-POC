@@ -38,7 +38,7 @@ namespace PocWebSf.Controllers
         [HttpPost]
         public JsonResult Start(string type)
         {
-            var jobId = BackgroundJob.Enqueue(() => new DataLockJob().RunDataLock(null, type));
+            var jobId = BackgroundJob.Enqueue(() => new DataLockJob().RunDataLock(null, JobCancellationToken.Null, type));
             return new JsonResult(new { ok = true, jobId });
         }
     }

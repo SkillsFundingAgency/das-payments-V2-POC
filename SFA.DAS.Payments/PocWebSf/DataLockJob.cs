@@ -2,23 +2,37 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using DataLockActor.Interfaces;
+using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Client;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
+using SFA.DAS.Payments.Domain.Config;
+using SFA.DAS.Payments.TestDataGenerator;
 using Metric = SFA.DAS.Payments.Domain.Metric;
 
 namespace PocWebSf
 {
+    public class ConfigEntity : TableEntity
+    {
+        public string Map { get; set; }
+    }
+
     public class DataLockJob
     {
         public const string DataLockActorTableStorage = "DataLockActorTableStorage";
         public const string DataLockActorSql = "DataLockActorSql";
         public const string DataLockActorStateManager = "DataLockActorStateManager";
 
-        public void RunDataLock(PerformContext context, string actorType = DataLockActorStateManager)
+        [AutomaticRetry(Attempts = 0)]
+        [DisableConcurrentExecution(5)]
+        public void RunDataLock(PerformContext context, IJobCancellationToken cancellationToken, string actorType = DataLockActorStateManager)
         {
             var metricBatchId = DateTime.UtcNow.ToString("s") + " " + actorType;
             
@@ -34,6 +48,16 @@ namespace PocWebSf
             {
                 try
                 {
+                    var table = CloudStorageAccount.Parse(Configuration.TableStorageServerConnectionString).CreateCloudTableClient().GetTableReference("Config");
+                    await table.CreateIfNotExistsAsync();
+                    var tableOperation = TableOperation.Retrieve<ConfigEntity>("LOCAL", "Config");
+                    var json = await table.ExecuteAsync(tableOperation);
+                    ConcurrentDictionary<long, long> map;
+                    if (json.HttpStatusCode == (int) HttpStatusCode.OK && json.Result != null)
+                        map = JsonConvert.DeserializeObject<ConcurrentDictionary<long, long>>(((ConfigEntity)json.Result).Map);
+                    else
+                        map = new ConcurrentDictionary<long, long>();
+
                     if (actorType == DataLockActorTableStorage)
                     {
                         context.WriteLine("Resetting table storage...");
@@ -67,7 +91,27 @@ namespace PocWebSf
                                     var sw2 = Stopwatch.StartNew();
                                     var earning = earningsForUkprn[i];
 
-                                    var actor = ActorProxy.Create<IDataLockActor>(new ActorId(earning.Ukprn), new Uri(string.Format(SFA.DAS.Payments.Domain.Config.Configuration.ActorConnectionString, actorType)));
+                                    //long actorGuid;
+                                    //ActorId actorId;
+
+                                    //if (map.TryGetValue(earning.Ukprn, out actorGuid))
+                                    //{
+                                    //    actorId = new ActorId(actorGuid);
+                                    //}
+                                    //else
+                                    //{
+                                    //    actorId = ActorId.CreateRandom();
+                                    //    actorGuid = actorId.GetLongId();
+                                    //    map.TryAdd(earning.Ukprn, actorGuid);
+                                    //    await table.ExecuteAsync(TableOperation.InsertOrReplace(new ConfigEntity
+                                    //    {
+                                    //        PartitionKey = "LOCAL",
+                                    //        RowKey = "Config",
+                                    //        Map = JsonConvert.SerializeObject(map)
+                                    //    }));
+                                    //}
+
+                                    var actor = ActorProxy.Create<IDataLockActor>(new ActorId(ukprn), new Uri(string.Format(SFA.DAS.Payments.Domain.Config.Configuration.ActorConnectionString, actorType)));
 
                                     var proxyTime = sw2.ElapsedTicks;
                                     sw2.Restart();
@@ -85,9 +129,17 @@ namespace PocWebSf
                                     await SFA.DAS.Payments.TestDataGenerator.TestDataGenerator.WriteMetric(metrics);
                                     stats.Add(metrics);
 
-                                    progress.SetValue(metrics.Progress * 100);
+                                    try
+                                    {
+                                        progress.SetValue(metrics.Progress * 100);
+                                    }
+                                    catch
+                                    {
+                                    }
 
                                     lastMetricsWrite = sw2.ElapsedTicks;
+
+                                    //cancellationToken.ThrowIfCancellationRequested();
                                 }
                                 catch(Exception ex)
                                 {
@@ -95,7 +147,8 @@ namespace PocWebSf
                                     break;
                                 }
                             }
-                        }).Wait();
+                        }, cancellationToken.ShutdownToken).Wait();
+                    //}).Wait();
                     });
 
                     context.SetTextColor(ConsoleTextColor.Green);
@@ -105,8 +158,9 @@ namespace PocWebSf
                     context.WriteLine($"Total caller time: {callerTime.Sum()/10000:#,##0}ms, average caller time: {callerTime.Average()/10000:#,##0.####}ms");
                     context.WriteLine($"Total callee time: {calleeTime.Sum()/10000:#,##0}ms, average callee time: {calleeTime.Average()/10000:#,##0.####}ms");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    //BackgroundJob.Delete(context.BackgroundJob.Id);
                     throw;
                 }
             }).Wait();

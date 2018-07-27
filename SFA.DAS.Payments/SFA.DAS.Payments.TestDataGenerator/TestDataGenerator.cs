@@ -129,18 +129,26 @@ namespace SFA.DAS.Payments.TestDataGenerator
                 .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
                 .ToDictionary(c => c.Key, c => c.ToList());
 
-
             foreach (var commitment in commitments)
             {
                 var tableOperation = TableOperation.Insert(new CommitmentTableStorageEntity
                 {
+                    PartitionKey = PartitionKey(commitment.Key),
                     RowKey = commitment.Key,
                     Commitments = JsonConvert.SerializeObject(commitment.Value)
                 });
-
                 await table.ExecuteAsync(tableOperation);
             }
         }
+
+        private static string PartitionKey(string key)
+        {
+            var indexOf = key.IndexOf('-');
+            if (indexOf <= 0)
+                return "LOCAL";
+            return key.Substring(0, indexOf);
+        }
+
 
         public static async Task ResetAndPopulateSqlStorage()
         {

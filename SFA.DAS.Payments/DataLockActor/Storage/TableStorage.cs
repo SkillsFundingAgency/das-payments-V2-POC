@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
@@ -46,13 +47,15 @@ namespace DataLockActor.Storage
 
         public async Task<string> Update(string key, List<Commitment> commitments)
         {
+            var sw = Stopwatch.StartNew();
             var tableOperation = TableOperation.InsertOrReplace(new CommitmentEntity()
             {
+                PartitionKey = PartitionKey(key),
                 RowKey = key,
                 Commitments = JsonConvert.SerializeObject(commitments)
             });
             await GetTable().ExecuteAsync(tableOperation);
-            return null;
+            return sw.ElapsedTicks.ToString();
         }
 
         private CloudTable GetTable()

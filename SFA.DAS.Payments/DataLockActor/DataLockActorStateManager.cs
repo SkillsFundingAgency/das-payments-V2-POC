@@ -1,10 +1,16 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using DataLockActor.Storage;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 using SFA.DAS.Payments.Application.Interfaces;
+using SFA.DAS.Payments.Domain.Config;
 using SFA.DAS.Payments.TestDataGenerator;
 
 namespace DataLockActor
@@ -45,6 +51,12 @@ namespace DataLockActor
 
             ICommitmentProvider commitmentProvider = new CommitmentProvider();
 
+            //var table = CloudStorageAccount.Parse(Configuration.TableStorageServerConnectionString).CreateCloudTableClient().GetTableReference("Config");
+            //var tableOperation = TableOperation.Retrieve<ConfigEntity>("LOCAL", "Config");
+            //var json = await table.ExecuteAsync(tableOperation);
+            //var map = JsonConvert.DeserializeObject<ConcurrentDictionary<long, long>>(((ConfigEntity) json.Result).Map);
+            //Ukprn = map.Single(kvp => kvp.Value == Ukprn).Key;
+
             var commitments = commitmentProvider.GetCommitments(Ukprn)
                 .GroupBy(c => string.Concat(c.Ukprn, "-", c.LearnerReferenceNumber))
                 .ToDictionary(c => c.Key, c => c.ToList());
@@ -64,5 +76,9 @@ namespace DataLockActor
             Debug.WriteLine($"saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
             TestDataGenerator.Log("DataLockActorStateManager", $" saved in state in {sw.ElapsedMilliseconds.ToString("##,###")}ms");
         }
+    }
+    public class ConfigEntity : TableEntity
+    {
+        public string Map { get; set; }
     }
 }
