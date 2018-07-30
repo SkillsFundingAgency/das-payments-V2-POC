@@ -23,7 +23,7 @@ Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "SFA.DAS.Payments.PocWebClie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PocWebSf", "PocWebSf\PocWebSf.csproj", "{DF63B3B2-8514-47C5-8526-01CE9143BECA}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.Payments.POC.Database", "SFA.DAS.Payments.POC.Database\SFA.DAS.Payments.Poc.Database.sqlproj", "{A1351013-7825-42E8-A4EE-2413EB44C620}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.Payments.Poc.Database", "SFA.DAS.Payments.POC.Database\SFA.DAS.Payments.Poc.Database.sqlproj", "{A1351013-7825-42E8-A4EE-2413EB44C620}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

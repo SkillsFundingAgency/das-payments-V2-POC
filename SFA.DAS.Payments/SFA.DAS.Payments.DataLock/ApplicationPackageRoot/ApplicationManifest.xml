@@ -23,7 +23,7 @@
         <UniformInt64Partition PartitionCount="[DataLockActorSql_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
-    <Service Name="DataLockActorStateManager" GeneratedIdRef="de32ae84-2e0c-4967-9de6-1096b930353b|Volatile">
+    <Service Name="DataLockActorStateManager" GeneratedIdRef="34e1a962-7dc0-495a-af8e-34069030808d|Volatile">
       <StatefulService ServiceTypeName="DataLockActorStateManagerType" TargetReplicaSetSize="[DataLockActorStateManager_TargetReplicaSetSize]" MinReplicaSetSize="[DataLockActorStateManager_MinReplicaSetSize]">
         <UniformInt64Partition PartitionCount="[DataLockActorStateManager_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>

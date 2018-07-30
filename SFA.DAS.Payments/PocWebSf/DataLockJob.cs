@@ -34,7 +34,7 @@ namespace PocWebSf
         [DisableConcurrentExecution(5)]
         public void RunDataLock(PerformContext context, IJobCancellationToken cancellationToken, string actorType = DataLockActorStateManager)
         {
-            var metricBatchId = DateTime.UtcNow.ToString("s") + " " + actorType;
+            var metricBatchId = DateTime.UtcNow.ToString("s") + " " + actorType + " V";
             
             context.SetTextColor(ConsoleTextColor.Yellow);
 

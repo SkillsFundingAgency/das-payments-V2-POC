@@ -24,6 +24,7 @@ namespace DataLockActor.Storage
         public async Task Add(string key, IList<Commitment> commitments)
         {
             await _stateManager.TryAddStateAsync(key, commitments);
+            await _stateManager.SaveStateAsync();
         }
 
         public async Task<IList<Commitment>> Get(string key)
