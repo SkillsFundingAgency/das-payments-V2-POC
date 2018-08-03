@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PocWebSf", "PocWebSf\PocWeb
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.Payments.Poc.Database", "SFA.DAS.Payments.POC.Database\SFA.DAS.Payments.Poc.Database.sqlproj", "{A1351013-7825-42E8-A4EE-2413EB44C620}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Payments.ServiceFabric.AutoActorIdPocClient", "SFA.DAS.Payments.ServiceFabric.AutoActorIdPocClient\SFA.DAS.Payments.ServiceFabric.AutoActorIdPocClient.csproj", "{BF3AF9A8-0580-419C-9438-A18ABA942C06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,14 @@ Global
 		{A1351013-7825-42E8-A4EE-2413EB44C620}.Release|x64.ActiveCfg = Release|Any CPU
 		{A1351013-7825-42E8-A4EE-2413EB44C620}.Release|x64.Build.0 = Release|Any CPU
 		{A1351013-7825-42E8-A4EE-2413EB44C620}.Release|x64.Deploy.0 = Release|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Debug|x64.Build.0 = Debug|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Release|x64.ActiveCfg = Release|Any CPU
+		{BF3AF9A8-0580-419C-9438-A18ABA942C06}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
