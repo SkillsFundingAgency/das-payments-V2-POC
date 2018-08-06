@@ -1,9 +1,7 @@
 ﻿using DataLockActor.Interfaces;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Client;
-using Microsoft.ServiceFabric.Actors.Runtime;
 using System;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.Payments.ServiceFabric.AutoActorIdPocClient
 {
